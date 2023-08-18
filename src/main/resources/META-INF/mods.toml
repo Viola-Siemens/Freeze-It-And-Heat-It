@@ -1,0 +1,34 @@
+modLoader="javafml"
+loaderVersion="[40,)"
+license="GPL v3.0"
+issueTrackerURL="https://github.com/Viola-Siemens/Freeze-It-And-Heat-It/issues"
+
+[[mods]]
+modId="fiahi"
+version="${file.jarVersion}"
+displayName="Freeze It, and Heat It!"
+logoFile="logo.png"
+credits="Liu Dongyu"
+authors="Hexagram"
+description='''
+With this mod, your food will become frozen or rotten in very low or high temperature. You will get debuff if you eat unfresh foods. How to survive under this difficult situation?
+'''
+
+[[dependencies.fiahi]]
+    modId="forge"
+    mandatory=true
+    versionRange="[40,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.fiahi]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.18.2,1.19)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.fiahi]]
+    modId="cold_sweat"
+    mandatory=true
+    versionRange="[2.1.9,)"
+    ordering="NONE"
+    side="BOTH"
