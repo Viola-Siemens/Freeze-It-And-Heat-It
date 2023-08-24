@@ -1,6 +1,7 @@
 package com.hexagram2021.fiahi.mixin;
 
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
+import com.hexagram2021.fiahi.common.util.FIAHILogger;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import dev.momostudios.coldsweat.api.util.Temperature;
 import net.minecraft.core.BlockPos;
@@ -15,19 +16,33 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.function.BooleanSupplier;
+
 @Mixin(ServerLevel.class)
 public class ServerLevelMixin {
+	private int foodTickChecker = 100;
+
+	@Inject(method = "tick", at = @At(value = "HEAD"))
+	private void addFoodTickChecker(BooleanSupplier haveTime, CallbackInfo ci) {
+		this.foodTickChecker -= 1;
+		if(this.foodTickChecker < 0) {
+			this.foodTickChecker += FIAHICommonConfig.TEMPERATURE_CHECKER_INTERVAL.get();
+		}
+	}
+
 	@Inject(method = "tickBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;tick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Ljava/util/Random;)V", shift = At.Shift.AFTER))
 	private void tickContainer(BlockPos blockPos, Block block, CallbackInfo ci) {
 		ServerLevel current = (ServerLevel)(Object)this;
-		if(current.getGameTime() % FIAHICommonConfig.TEMPERATURE_CHECKER_INTERVAL.get() == 0) {
+		if(this.foodTickChecker == 0) {
 			BlockState blockState = current.getBlockState(blockPos);
 			if (blockState.hasBlockEntity()) {
 				BlockEntity blockEntity = current.getBlockEntity(blockPos);
 				if (blockEntity instanceof Container container) {
+					double temp = Temperature.getTemperatureAt(blockPos, current);
+					FIAHILogger.debug("Temperature at (%d, %d, %d) is %f.".formatted(blockPos.getX(), blockPos.getY(), blockPos.getZ(), temp));
 					for (int i = 0; i < container.getContainerSize(); ++i) {
 						ItemStack food = container.getItem(i);
-						food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.foodTick(Temperature.getTemperatureAt(blockPos, current)));
+						food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.foodTick(temp));
 					}
 				}
 			}
