@@ -1,6 +1,9 @@
 package com.hexagram2021.fiahi.common;
 
+import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
@@ -15,5 +18,10 @@ public final class FIAHIContent {
 
 	public static void init() {
 
+	}
+
+	@SubscribeEvent
+	public static void onRegisterCapability(RegisterCapabilitiesEvent event) {
+		event.register(IFrozenRottenFood.class);
 	}
 }

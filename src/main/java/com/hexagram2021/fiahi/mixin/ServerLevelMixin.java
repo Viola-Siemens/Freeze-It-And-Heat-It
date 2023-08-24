@@ -1,10 +1,11 @@
 package com.hexagram2021.fiahi.mixin;
 
-import com.hexagram2021.fiahi.common.item.IFrozenRottenFood;
+import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import dev.momostudios.coldsweat.api.util.Temperature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,8 +24,8 @@ public class ServerLevelMixin {
 			BlockEntity blockEntity = current.getBlockEntity(blockPos);
 			if(blockEntity instanceof Container container) {
 				for(int i = 0; i < container.getContainerSize(); ++i) {
-					IFrozenRottenFood food = (IFrozenRottenFood)(Object)container.getItem(i);
-					food.tick(Temperature.getTemperatureAt(blockPos, current));
+					ItemStack food = container.getItem(i);
+					food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.tick(Temperature.getTemperatureAt(blockPos, current)));
 				}
 			}
 		}

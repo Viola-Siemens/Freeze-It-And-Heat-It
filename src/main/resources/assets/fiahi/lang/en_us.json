@@ -1,0 +1,14 @@
+{
+  "language": "English",
+  "language.code": "en_us",
+  "language.region": "United States",
+
+  "item.fiahi.temperature.description": "Temperature: %.2f",
+  "item.fiahi.temperature.normal": "Fresh Food",
+  "item.fiahi.temperature.frozen.1": "Lightly Frozen",
+  "item.fiahi.temperature.frozen.2": "Mostly Frozen",
+  "item.fiahi.temperature.frozen.3": "Completely Frozen",
+  "item.fiahi.temperature.rotten.1": "Lightly Rotten",
+  "item.fiahi.temperature.rotten.2": "Mostly Rotten",
+  "item.fiahi.temperature.rotten.3": "Completely Rotten"
+}
