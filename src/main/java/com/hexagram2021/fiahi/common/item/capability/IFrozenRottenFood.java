@@ -1,7 +1,6 @@
 package com.hexagram2021.fiahi.common.item.capability;
 
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
-import net.minecraft.world.item.ItemStack;
 
 public interface IFrozenRottenFood {
 	int FROZEN_ROTTEN_THRESHOLD = 25;
@@ -9,10 +8,6 @@ public interface IFrozenRottenFood {
 
 	double getTemperature();
 	void setTemperature(double newTemperature);
-
-	default ItemStack self() {
-		return (ItemStack) this;
-	}
 
 	default void apply(double newTemperature) {
 		double temp = this.getTemperature();

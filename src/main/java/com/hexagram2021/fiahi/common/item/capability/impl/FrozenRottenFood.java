@@ -2,21 +2,11 @@ package com.hexagram2021.fiahi.common.item.capability.impl;
 
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
-import com.hexagram2021.fiahi.register.FIAHICapabilities;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-
-public class FrozenRottenFood extends ItemStack implements IFrozenRottenFood, INBTSerializable<CompoundTag> {
+public class FrozenRottenFood implements IFrozenRottenFood, INBTSerializable<CompoundTag> {
 	private static final String FIAHI_TAG_TEMPERATURE = "fiahi:temperature";
 	private static final String FIAHI_TAG_CHECKER = "fiahi:nextChecker";
 	private static final String FIAHI_TAG_ROTTEN_LEVEL = "fiahi:rotten_level";
@@ -26,17 +16,10 @@ public class FrozenRottenFood extends ItemStack implements IFrozenRottenFood, IN
 
 	private int nextTickChecker = 100;
 
-	public FrozenRottenFood(ItemLike item) {
-		super(item);
-	}
-	public FrozenRottenFood(Holder<Item> item) {
-		super(item);
-	}
-	public FrozenRottenFood(ItemLike item, int count) {
-		super(item, count);
-	}
-	public FrozenRottenFood(ItemLike item, int count, @Nullable CompoundTag nbt) {
-		super(item, count, nbt);
+	private final ItemStack self;
+
+	public FrozenRottenFood(ItemStack self) {
+		this.self = self;
 	}
 
 	@Override
@@ -51,7 +34,7 @@ public class FrozenRottenFood extends ItemStack implements IFrozenRottenFood, IN
 
 	@Override
 	public void tick(double temperature) {
-		if(this.self().isEdible()) {
+		if(this.self.isEdible()) {
 			if(this.nextTickChecker > 0) {
 				--this.nextTickChecker;
 			} else {
@@ -66,7 +49,7 @@ public class FrozenRottenFood extends ItemStack implements IFrozenRottenFood, IN
 		int rotten = this.getRottenLevel();
 		int frozen = this.getFrozenLevel();
 		boolean remove = rotten == 0 && frozen == 0;
-		CompoundTag nbt = this.self().getTag();
+		CompoundTag nbt = this.self.getTag();
 		if(nbt == null) {
 			if(remove) {
 				return;
@@ -86,7 +69,7 @@ public class FrozenRottenFood extends ItemStack implements IFrozenRottenFood, IN
 			nbt.putInt(FIAHI_TAG_FROZEN_LEVEL, frozen);
 		}
 
-		this.self().setTag(nbt);
+		this.self.setTag(nbt);
 	}
 
 	@Override
@@ -102,15 +85,5 @@ public class FrozenRottenFood extends ItemStack implements IFrozenRottenFood, IN
 		this.setTemperature(nbt.getDouble(FIAHI_TAG_TEMPERATURE));
 		this.updateFoodFrozenRottenLevel();
 		this.nextTickChecker = nbt.getInt(FIAHI_TAG_CHECKER);
-	}
-
-	private final LazyOptional<IFrozenRottenFood> holder = LazyOptional.of(() -> this);
-
-	@Override @Nonnull
-	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing) {
-		if (capability == FIAHICapabilities.FOOD_CAPABILITY) {
-			return this.holder.cast();
-		}
-		return super.getCapability(capability, facing);
 	}
 }
