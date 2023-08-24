@@ -1,5 +1,6 @@
 package com.hexagram2021.fiahi.mixin;
 
+import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import dev.momostudios.coldsweat.api.util.Temperature;
 import net.minecraft.core.BlockPos;
@@ -19,13 +20,15 @@ public class ServerLevelMixin {
 	@Inject(method = "tickBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;tick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Ljava/util/Random;)V", shift = At.Shift.AFTER))
 	private void tickContainer(BlockPos blockPos, Block block, CallbackInfo ci) {
 		ServerLevel current = (ServerLevel)(Object)this;
-		BlockState blockState = current.getBlockState(blockPos);
-		if(blockState.hasBlockEntity()) {
-			BlockEntity blockEntity = current.getBlockEntity(blockPos);
-			if(blockEntity instanceof Container container) {
-				for(int i = 0; i < container.getContainerSize(); ++i) {
-					ItemStack food = container.getItem(i);
-					food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.tick(Temperature.getTemperatureAt(blockPos, current)));
+		if(current.getGameTime() % FIAHICommonConfig.TEMPERATURE_CHECKER_INTERVAL.get() == 0) {
+			BlockState blockState = current.getBlockState(blockPos);
+			if (blockState.hasBlockEntity()) {
+				BlockEntity blockEntity = current.getBlockEntity(blockPos);
+				if (blockEntity instanceof Container container) {
+					for (int i = 0; i < container.getContainerSize(); ++i) {
+						ItemStack food = container.getItem(i);
+						food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.foodTick(Temperature.getTemperatureAt(blockPos, current)));
+					}
 				}
 			}
 		}

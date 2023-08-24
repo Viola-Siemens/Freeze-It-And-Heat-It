@@ -44,7 +44,7 @@ public interface IFrozenRottenFood {
 		return temp <= 0 ? 0 : (temp - FROZEN_ROTTEN_THRESHOLD) / FROZEN_ROTTEN_THRESHOLD;
 	}
 
-	void tick(double temperature);
+	void foodTick(double temperature);
 
 	void updateFoodFrozenRottenLevel();
 }

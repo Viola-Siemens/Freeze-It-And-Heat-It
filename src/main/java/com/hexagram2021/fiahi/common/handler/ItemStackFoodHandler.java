@@ -4,15 +4,19 @@ import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
 import com.hexagram2021.fiahi.common.item.capability.impl.FrozenRottenFood;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
-public class ItemStackFoodHandler implements ICapabilityProvider {
+public class ItemStackFoodHandler implements ICapabilityProvider, INBTSerializable<CompoundTag> {
+	private static final String FIAHI_TAG_TEMPERATURE = "fiahi:temperature";
+
 	private final FrozenRottenFood food;
 	private final LazyOptional<IFrozenRottenFood> holder;
 
@@ -24,5 +28,18 @@ public class ItemStackFoodHandler implements ICapabilityProvider {
 	@Override @Nonnull
 	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing) {
 		return FIAHICapabilities.FOOD_CAPABILITY.orEmpty(capability, this.holder);
+	}
+
+	@Override
+	public CompoundTag serializeNBT() {
+		CompoundTag nbt = new CompoundTag();
+		nbt.putDouble(FIAHI_TAG_TEMPERATURE, this.food.getTemperature());
+		return nbt;
+	}
+
+	@Override
+	public void deserializeNBT(CompoundTag nbt) {
+		this.food.setTemperature(nbt.getDouble(FIAHI_TAG_TEMPERATURE));
+		this.food.updateFoodFrozenRottenLevel();
 	}
 }
