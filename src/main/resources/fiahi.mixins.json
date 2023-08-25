@@ -4,6 +4,8 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "fiahi.refmap.json",
   "mixins": [
+    "ItemEntityMixin",
+    "ItemStackMixin",
     "ServerLevelMixin"
   ],
   "minVersion": "0.8"
