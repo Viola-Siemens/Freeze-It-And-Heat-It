@@ -1,13 +1,11 @@
 package com.hexagram2021.fiahi.common;
 
 import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
-import com.hexagram2021.fiahi.common.util.FIAHILogger;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import dev.momostudios.coldsweat.api.util.Temperature;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -37,10 +35,9 @@ public final class ForgeEventHandler {
 					levelChunk.getBlockEntities().forEach((blockPos, blockEntity) -> {
 						if (blockEntity.hasLevel() && blockEntity instanceof Container container) {
 							double temp = Temperature.getTemperatureAt(blockPos, Objects.requireNonNull(blockEntity.getLevel()));
-							FIAHILogger.debug("Temperature at (%d, %d, %d) is %f.".formatted(blockPos.getX(), blockPos.getY(), blockPos.getZ(), temp));
 							for (int i = 0; i < container.getContainerSize(); ++i) {
 								ItemStack food = container.getItem(i);
-								food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.foodTick(temp));
+								food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.foodTick(c.getTemperature() + 5.0 * temp));
 							}
 						}
 					});

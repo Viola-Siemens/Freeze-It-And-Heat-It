@@ -33,13 +33,13 @@ public class ItemStackFoodHandler implements ICapabilityProvider, INBTSerializab
 	@Override
 	public CompoundTag serializeNBT() {
 		CompoundTag nbt = new CompoundTag();
-		nbt.putDouble(FIAHI_TAG_TEMPERATURE, this.food.getTemperature());
+		nbt.putInt(FIAHI_TAG_TEMPERATURE, (int)this.food.getTemperature());
 		return nbt;
 	}
 
 	@Override
 	public void deserializeNBT(CompoundTag nbt) {
-		this.food.setTemperature(nbt.getDouble(FIAHI_TAG_TEMPERATURE));
+		this.food.setTemperature(nbt.getInt(FIAHI_TAG_TEMPERATURE));
 		this.food.updateFoodFrozenRottenLevel();
 	}
 }

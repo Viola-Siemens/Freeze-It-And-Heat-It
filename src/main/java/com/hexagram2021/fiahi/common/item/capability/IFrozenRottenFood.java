@@ -1,6 +1,7 @@
 package com.hexagram2021.fiahi.common.item.capability;
 
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
+import dev.momostudios.coldsweat.config.ConfigSettings;
 
 public interface IFrozenRottenFood {
 	int FROZEN_ROTTEN_THRESHOLD = 25;
@@ -11,7 +12,7 @@ public interface IFrozenRottenFood {
 
 	default void apply(double newTemperature) {
 		double temp = this.getTemperature();
-		double diff = newTemperature - temp;
+		double diff = (newTemperature - temp) * ConfigSettings.TEMP_RATE.get();
 		boolean flag = temp > 0;
 		int level = flag ? this.getRottenLevel() : this.getFrozenLevel();
 		this.setTemperature(temp + diff * FIAHICommonConfig.TEMPERATURE_BALANCE_RATE.get() / 100.0D);

@@ -40,7 +40,7 @@ public final class FIAHICommonConfig {
 			ENABLE_ROTTEN = BUILDER.comment("If false, foods will never be rotten.")
 					.define("ENABLE_ROTTEN", true);
 			TEMPERATURE_CHECKER_INTERVAL = BUILDER.comment("How many ticks after a single check will it try again to modify the temperature of the food.")
-					.defineInRange("TEMPERATURE_CHECKER_INTERVAL", 50, 1, 24000);
+					.defineInRange("TEMPERATURE_CHECKER_INTERVAL", 100, 1, 24000);
 			TEMPERATURE_BALANCE_RATE = BUILDER.comment("When trying to modify the temperature of the food each time, how many difference will be applied.")
 					.defineInRange("TEMPERATURE_BALANCE_RATE", 20, 1, 100);
 		BUILDER.pop();
