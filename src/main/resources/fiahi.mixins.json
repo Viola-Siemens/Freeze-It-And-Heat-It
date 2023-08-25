@@ -5,8 +5,7 @@
   "refmap": "fiahi.refmap.json",
   "mixins": [
     "ItemEntityMixin",
-    "ItemStackMixin",
-    "ServerLevelMixin"
+    "ItemStackMixin"
   ],
   "minVersion": "0.8"
 }
