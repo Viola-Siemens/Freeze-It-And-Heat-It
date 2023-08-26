@@ -3,7 +3,7 @@
   "language.code": "en_us",
   "language.region": "United States",
 
-  "item.fiahi.temperature.description": "Temperature: %.2f",
+  "item.fiahi.temperature.description": "Temperature: %d",
   "item.fiahi.temperature.normal": "Fresh Food",
   "item.fiahi.temperature.frozen.1": "Lightly Frozen",
   "item.fiahi.temperature.frozen.2": "Mostly Frozen",

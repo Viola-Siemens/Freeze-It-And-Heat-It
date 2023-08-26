@@ -21,7 +21,6 @@ public class ClientEventHandler {
 		if(itemStack.isEdible()) {
 			itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
 				Component status = new TranslatableComponent("item.fiahi.temperature.normal");
-				Component temperature = new TranslatableComponent("item.fiahi.temperature.description", c.getTemperature());
 				if(c.getFrozenLevel() > 0) {
 					status = new TranslatableComponent("item.fiahi.temperature.frozen.%d".formatted(Mth.clamp(c.getFrozenLevel(), 0, 3)));
 				}
@@ -30,7 +29,7 @@ public class ClientEventHandler {
 				}
 				event.getToolTip().add(status);
 				if(Minecraft.getInstance().options.advancedItemTooltips) {
-					event.getToolTip().add(temperature);
+					event.getToolTip().add(new TranslatableComponent("item.fiahi.temperature.description", (int)c.getTemperature()));
 				}
 			});
 		}
