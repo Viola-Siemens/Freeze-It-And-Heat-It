@@ -5,7 +5,7 @@ import dev.momostudios.coldsweat.config.ConfigSettings;
 
 public interface IFrozenRottenFood {
 	int FROZEN_ROTTEN_THRESHOLD = 25;
-	double EPS = 1e-6D;
+	double EPS = 1e-4D;
 
 	double getTemperature();
 	void setTemperature(double newTemperature);
@@ -20,6 +20,10 @@ public interface IFrozenRottenFood {
 		int newLevel = newFlag ? this.getRottenLevel() : this.getFrozenLevel();
 		if(level == newLevel && (flag == newFlag || level == 0)) {
 			return;
+		}
+		if(newLevel > 3) {
+			newLevel = 3;
+			this.setTemperature((FROZEN_ROTTEN_THRESHOLD * 5 - EPS) * (flag ? 1 : -1));
 		}
 		if(level < newLevel) {
 			if(flag == newFlag || level == 0) {
