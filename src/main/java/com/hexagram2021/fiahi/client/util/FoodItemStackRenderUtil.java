@@ -6,6 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -31,10 +32,12 @@ public class FoodItemStackRenderUtil {
 				level = c.getRottenLevel();
 			}
 			if(sprite != null && level > 0) {
-				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, (float)level / 3.0F);
+				RenderStateShard.TRANSLUCENT_TRANSPARENCY.setupRenderState();
+				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, ((float)level + 1.0F) / 4.0F);
 				RenderSystem.setShader(GameRenderer::getPositionTexShader);
 				RenderSystem.setShaderTexture(0, sprite.atlas().location());
-				GuiComponent.blit(transform, x, y, blitOffset, 16, 16, sprite);
+				GuiComponent.blit(transform, x, y, blitOffset + 1, 16, 16, sprite);
+				RenderStateShard.TRANSLUCENT_TRANSPARENCY.clearRenderState();
 			}
 		});
 	}
