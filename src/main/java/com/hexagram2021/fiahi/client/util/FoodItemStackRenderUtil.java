@@ -36,7 +36,7 @@ public class FoodItemStackRenderUtil {
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, ((float)level + 1.0F) / 4.0F);
 				RenderSystem.setShader(GameRenderer::getPositionTexShader);
 				RenderSystem.setShaderTexture(0, sprite.atlas().location());
-				GuiComponent.blit(transform, x, y, blitOffset + 1, 16, 16, sprite);
+				GuiComponent.blit(transform, x, y, blitOffset + 100, 16, 16, sprite);
 				RenderStateShard.TRANSLUCENT_TRANSPARENCY.clearRenderState();
 			}
 		});
