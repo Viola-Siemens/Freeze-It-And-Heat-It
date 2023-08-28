@@ -19,7 +19,7 @@ public class ItemStackMixin {
 		ItemStack current = (ItemStack)(Object)this;
 		if(entity instanceof LivingEntity livingEntity) {
 			double temp = Temperature.get(livingEntity, Temperature.Type.CORE);
-			current.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.foodTick(temp));
+			current.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.foodTick(temp, current.getItem()));
 		}
 	}
 }

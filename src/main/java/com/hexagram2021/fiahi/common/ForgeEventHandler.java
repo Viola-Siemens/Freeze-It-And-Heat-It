@@ -37,7 +37,8 @@ public final class ForgeEventHandler {
 							double temp = Temperature.getTemperatureAt(blockPos, Objects.requireNonNull(blockEntity.getLevel()));
 							for (int i = 0; i < container.getContainerSize(); ++i) {
 								ItemStack food = container.getItem(i);
-								food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.foodTick(c.getTemperature() + 5.0 * temp));
+								food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c ->
+										c.foodTick(c.getTemperature() + 5.0 * temp, food.getItem()));
 							}
 						}
 					});

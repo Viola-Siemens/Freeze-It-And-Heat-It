@@ -18,6 +18,9 @@ public final class FIAHICommonConfig {
 	public static final ForgeConfigSpec.IntValue TEMPERATURE_CHECKER_INTERVAL;
 	public static final ForgeConfigSpec.IntValue TEMPERATURE_BALANCE_RATE;
 
+	public static final ForgeConfigSpec.DoubleValue FROZEN_SPEED_MULTIPLIER;
+	public static final ForgeConfigSpec.DoubleValue ROTTEN_SPEED_MULTIPLIER;
+
 	private FIAHICommonConfig() {}
 
 	static {
@@ -43,6 +46,11 @@ public final class FIAHICommonConfig {
 					.defineInRange("TEMPERATURE_CHECKER_INTERVAL", 100, 1, 24000);
 			TEMPERATURE_BALANCE_RATE = BUILDER.comment("When trying to modify the temperature of the food each time, how many difference will be applied.")
 					.defineInRange("TEMPERATURE_BALANCE_RATE", 20, 1, 100);
+
+			FROZEN_SPEED_MULTIPLIER = BUILDER.comment("How fast will a food item get frozen. The bigger, the faster.")
+					.defineInRange("FROZEN_SPEED_MULTIPLIER", 1.0D, 0.01D, 100.0D);
+			ROTTEN_SPEED_MULTIPLIER = BUILDER.comment("How fast will a food item get rotten. The bigger, the faster.")
+					.defineInRange("ROTTEN_SPEED_MULTIPLIER", 0.8D, 0.01D, 100.0D);
 		BUILDER.pop();
 		SPEC = BUILDER.build();
 	}
