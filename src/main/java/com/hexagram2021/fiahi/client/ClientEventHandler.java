@@ -1,12 +1,16 @@
 package com.hexagram2021.fiahi.client;
 
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
+import com.hexagram2021.fiahi.register.FIAHIMobEffects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -32,6 +36,23 @@ public class ClientEventHandler {
 					event.getToolTip().add(new TranslatableComponent("item.fiahi.temperature.description", (int)c.getTemperature()));
 				}
 			});
+		}
+	}
+
+	@SubscribeEvent
+	public static void onRenderPlayerView(EntityViewRenderEvent.CameraSetup event) {
+		Player player = Minecraft.getInstance().player;
+		if (!Minecraft.getInstance().isPaused() && player != null) {
+			float frameTime = Minecraft.getInstance().getDeltaFrameTime();
+
+			MobEffectInstance instance = player.getEffect(FIAHIMobEffects.SHIVER.get());
+			if(instance != null) {
+				float level = instance.getAmplifier() * 0.025F;
+
+				double tickTime = player.tickCount + event.getPartialTicks();
+				float shiverAmount = (float) (Math.sin((tickTime) * 3) * level * (10 * frameTime));
+				player.setYRot(player.getYRot() + shiverAmount);
+			}
 		}
 	}
 }
