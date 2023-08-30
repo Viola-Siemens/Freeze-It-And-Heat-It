@@ -3,6 +3,7 @@
   "language.code": "en_us",
   "language.region": "United States",
 
+  "item.fiahi.food_pouch": "Food Pouch",
   "item.fiahi.temperature.description": "Temperature: %d",
   "item.fiahi.temperature.normal": "Fresh Food",
   "item.fiahi.temperature.frozen.1": "Lightly Frozen",
@@ -10,5 +11,7 @@
   "item.fiahi.temperature.frozen.3": "Completely Frozen",
   "item.fiahi.temperature.rotten.1": "Lightly Rotten",
   "item.fiahi.temperature.rotten.2": "Mostly Rotten",
-  "item.fiahi.temperature.rotten.3": "Completely Rotten"
+  "item.fiahi.temperature.rotten.3": "Completely Rotten",
+
+  "effect.fiahi.shiver": "Shiver"
 }

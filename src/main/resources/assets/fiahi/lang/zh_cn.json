@@ -1,0 +1,17 @@
+{
+  "language": "Chinese",
+  "language.code": "zh_cn",
+  "language.region": "China",
+
+  "item.fiahi.food_pouch": "食物口袋",
+  "item.fiahi.temperature.description": "温度：%d",
+  "item.fiahi.temperature.normal": "新鲜食物",
+  "item.fiahi.temperature.frozen.1": "轻微冻结",
+  "item.fiahi.temperature.frozen.2": "大部分冻结",
+  "item.fiahi.temperature.frozen.3": "完全冻结",
+  "item.fiahi.temperature.rotten.1": "轻微腐烂",
+  "item.fiahi.temperature.rotten.2": "大部分腐烂",
+  "item.fiahi.temperature.rotten.3": "完全腐烂",
+
+  "effect.fiahi.shiver": "寒颤"
+}
