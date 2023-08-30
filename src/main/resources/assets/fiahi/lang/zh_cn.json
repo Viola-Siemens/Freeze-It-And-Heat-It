@@ -2,6 +2,7 @@
   "language": "Chinese",
   "language.code": "zh_cn",
   "language.region": "China",
+  "itemGroup.fiahi": "冷汗：食物冷冻与加热",
 
   "item.fiahi.food_pouch": "食物口袋",
   "item.fiahi.temperature.description": "温度：%d",
@@ -12,6 +13,9 @@
   "item.fiahi.temperature.rotten.1": "轻微腐烂",
   "item.fiahi.temperature.rotten.2": "大部分腐烂",
   "item.fiahi.temperature.rotten.3": "完全腐烂",
+
+  "gui.fiahi.temperature.description": "口袋温度：%f",
+  "gui.fiahi.count.description": "剩余：%d",
 
   "effect.fiahi.shiver": "寒颤"
 }

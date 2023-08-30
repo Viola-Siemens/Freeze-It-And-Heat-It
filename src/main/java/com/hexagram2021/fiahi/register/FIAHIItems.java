@@ -1,7 +1,7 @@
 package com.hexagram2021.fiahi.register;
 
+import com.hexagram2021.fiahi.FreezeItAndHeatIt;
 import com.hexagram2021.fiahi.common.item.FoodPouchItem;
-import dev.momostudios.coldsweat.core.itemgroup.ColdSweatGroup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
@@ -17,7 +17,7 @@ import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
 public class FIAHIItems {
 	private static final DeferredRegister<Item> REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-	public static final ItemEntry<FoodPouchItem> FOOD_POUCH = ItemEntry.register("food_pouch", () -> new FoodPouchItem(new Item.Properties().stacksTo(1).tab(ColdSweatGroup.COLD_SWEAT)));
+	public static final ItemEntry<FoodPouchItem> FOOD_POUCH = ItemEntry.register("food_pouch", () -> new FoodPouchItem(new Item.Properties().stacksTo(1).tab(FreezeItAndHeatIt.ITEM_GROUP)));
 
 	public static void init(IEventBus bus) {
 		REGISTER.register(bus);

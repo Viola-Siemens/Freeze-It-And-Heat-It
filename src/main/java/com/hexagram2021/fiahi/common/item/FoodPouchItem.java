@@ -18,8 +18,6 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.OptionalInt;
 
 public class FoodPouchItem extends Item {
-	private static final String TAG_ITEMS = "Items";
-
 	public FoodPouchItem(Properties props) {
 		super(props);
 	}
@@ -28,8 +26,7 @@ public class FoodPouchItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack itemStack = player.getItemInHand(hand);
 		CompoundTag tag = itemStack.getOrCreateTag().copy();
-		Component title = itemStack.getHoverName();
-		itemStack.shrink(1);
+		Component title = itemStack.getHoverName().copy();
 		if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
 			OptionalInt containerId = serverPlayer.openMenu(new SimpleMenuProvider((id, inventory, player1) -> new FoodPouchMenu(id, inventory, title, tag), title));
 			if (containerId.isPresent() && serverPlayer.containerMenu instanceof FoodPouchMenu menu) {
@@ -39,6 +36,7 @@ public class FoodPouchItem extends Item {
 				);
 			}
 		}
+		itemStack.shrink(1);
 		return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
 	}
 }

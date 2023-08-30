@@ -1,5 +1,7 @@
 package com.hexagram2021.fiahi.common.menu;
 
+import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
+import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
 import com.hexagram2021.fiahi.register.FIAHIMenuTypes;
 import net.minecraft.core.Registry;
@@ -24,7 +26,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FoodPouchMenu extends AbstractContainerMenu {
+public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRottenFood {
 	public static final int INPUT_SLOT = 0;
 	public static final int RESULT_SLOT = 1;
 	private static final int INV_SLOT_START = 2;
@@ -81,21 +83,33 @@ public class FoodPouchMenu extends AbstractContainerMenu {
 				ItemStack itemStack = this.getItem();
 				if(itemStack.getCount() > 0) {
 					if(FoodPouchMenu.this.stackedItems.containsKey(itemStack.getItem()) || FoodPouchMenu.this.stackedItems.size() < MAX_FOOD_TYPES) {
-						FoodPouchMenu.this.stackedItems.compute(itemStack.getItem(), (item, count) -> {
-							if(count == null) {
-								int newCount = itemStack.getCount();
+						itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
+							int totalCount = FoodPouchMenu.this.stackedItems.values().stream().reduce(0, Integer::sum);
+							FoodPouchMenu.this.stackedItems.compute(itemStack.getItem(), (item, count) -> {
+								if(count == null) {
+									int newCount = itemStack.getCount();
+									FoodPouchMenu.this.apply(
+											(totalCount * FoodPouchMenu.this.getTemperature() + c.getTemperature() * itemStack.getCount()) / (totalCount + itemStack.getCount())
+									);
+									itemStack.setCount(0);
+									return newCount;
+								}
+								int newCount = count + itemStack.getCount();
+								if(newCount > MAX_FOOD_COUNT) {
+									FoodPouchMenu.this.apply(
+											(totalCount * FoodPouchMenu.this.getTemperature() + c.getTemperature() * (MAX_FOOD_COUNT - count)) / (totalCount + MAX_FOOD_COUNT - count)
+									);
+									itemStack.shrink(MAX_FOOD_COUNT - count);
+									return MAX_FOOD_COUNT;
+								}
+								FoodPouchMenu.this.apply(
+										(totalCount * FoodPouchMenu.this.getTemperature() + c.getTemperature() * itemStack.getCount()) / (totalCount + itemStack.getCount())
+								);
 								itemStack.setCount(0);
 								return newCount;
-							}
-							int newCount = count + itemStack.getCount();
-							if(newCount > MAX_FOOD_COUNT) {
-								itemStack.shrink(MAX_FOOD_COUNT - count);
-								return MAX_FOOD_COUNT;
-							}
-							itemStack.setCount(0);
-							return newCount;
+							});
+							FoodPouchMenu.this.maintainItems();
 						});
-						FoodPouchMenu.this.maintainItems();
 					}
 				}
 				super.setChanged();
@@ -213,7 +227,9 @@ public class FoodPouchMenu extends AbstractContainerMenu {
 	@SuppressWarnings("deprecation")
 	private CompoundTag getContent() {
 		CompoundTag ret = new CompoundTag();
-		ret.putDouble("temperature", this.getTemperature());
+		if(this.stackedItems.size() > 0) {
+			ret.putDouble("temperature", this.getTemperature());
+		}
 		ListTag list = new ListTag();
 
 		this.stackedItems.forEach((item, count) -> {
@@ -256,13 +272,30 @@ public class FoodPouchMenu extends AbstractContainerMenu {
 	public void setStackedItems(Map<Item, Integer> stackedItems) {
 		this.stackedItems.clear();
 		this.stackedItems.putAll(stackedItems);
+		this.maintainItems();
 	}
 
+	@Override
 	public double getTemperature() {
 		return this.data.get(0) / 100.0D;
 	}
+
+	@Override
 	public void setTemperature(double temperature) {
 		this.data.set(0, (int)(temperature * 100.0D));
+	}
+
+	@Override
+	public double getTemperatureBalanceRate() {
+		return 1.0D;
+	}
+
+	@Override
+	public void foodTick(double temperature, Item item) {
+	}
+
+	@Override
+	public void updateFoodFrozenRottenLevel() {
 	}
 
 	public int getSelectedIndex() {
@@ -279,6 +312,14 @@ public class FoodPouchMenu extends AbstractContainerMenu {
 
 	public Map<Item, Integer> getItemsAndCounts() {
 		return this.stackedItems;
+	}
+
+	public int getItemStockCount() {
+		int index = this.getSelectedIndex();
+		if(index < 0 || index >= this.items.size()) {
+			return 0;
+		}
+		return this.stackedItems.getOrDefault(this.items.get(index), 0);
 	}
 
 	@Override

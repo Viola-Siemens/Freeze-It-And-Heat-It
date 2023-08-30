@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
@@ -26,9 +27,13 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 	private static final int FOOD_IMAGE_SIZE_HEIGHT = 18;
 	private static final int FOOD_X = 46;
 	private static final int FOOD_Y = 32;
+	private static final int TEMPERATURE_X = 48;
+	private static final int TEMPERATURE_Y = 18;
+	private static final int COUNT_X = 128;
+	private static final int COUNT_Y = 56;
 
 	@Nullable
-	public List<ItemStack> stackedItems;
+	private List<ItemStack> stackedItems;
 
 	public FoodPouchScreen(FoodPouchMenu menu, Inventory inventory, Component title) {
 		super(menu, inventory, title);
@@ -93,10 +98,23 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 		if(this.stackedItems != null) {
 			for(int i = 0; i < this.stackedItems.size(); ++i) {
 				int x = buttonX + i * FOOD_IMAGE_SIZE_WIDTH;
-				int y = buttonY + 2;
-				Objects.requireNonNull(this.minecraft).getItemRenderer().renderAndDecorateItem(this.stackedItems.get(i), x, y);
+				Objects.requireNonNull(this.minecraft).getItemRenderer().renderAndDecorateItem(this.stackedItems.get(i), x, buttonY);
 			}
 		}
+	}
+
+	@Override
+	public void renderLabels(PoseStack transform, int mouseX, int mouseY) {
+		super.renderLabels(transform, mouseX, mouseY);
+		this.font.draw(
+				transform, new TranslatableComponent("gui.fiahi.temperature.description", this.menu.getTemperature()),
+				TEMPERATURE_X, TEMPERATURE_Y, 0x404040
+		);
+		this.font.draw(
+				transform,
+				new TranslatableComponent("gui.fiahi.count.description", this.menu.getItemStockCount()),
+				COUNT_X, COUNT_Y, 0x404040
+		);
 	}
 
 	@Override

@@ -2,6 +2,7 @@
   "language": "English",
   "language.code": "en_us",
   "language.region": "United States",
+  "itemGroup.fiahi": "Freeze It, and Heat It!",
 
   "item.fiahi.food_pouch": "Food Pouch",
   "item.fiahi.temperature.description": "Temperature: %d",
@@ -12,6 +13,9 @@
   "item.fiahi.temperature.rotten.1": "Lightly Rotten",
   "item.fiahi.temperature.rotten.2": "Mostly Rotten",
   "item.fiahi.temperature.rotten.3": "Completely Rotten",
+
+  "gui.fiahi.temperature.description": "Pouch Temperature: %f",
+  "gui.fiahi.count.description": "Stock: %d",
 
   "effect.fiahi.shiver": "Shiver"
 }
