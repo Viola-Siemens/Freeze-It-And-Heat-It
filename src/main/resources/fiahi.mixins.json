@@ -6,7 +6,13 @@
   "mixins": [
     "ItemEntityMixin",
     "ItemStackMixin",
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "cold_sweat.BoilerBlockEntityMixin",
+    "cold_sweat.BoilerContainerMixin",
+    "cold_sweat.BoilerContainerSlotMixin",
+    "cold_sweat.IceBoxBlockEntityMixin",
+    "cold_sweat.IceboxContainerMixin",
+    "cold_sweat.IceboxContainerSlotMixin"
   ],
   "minVersion": "0.8",
   "client": [

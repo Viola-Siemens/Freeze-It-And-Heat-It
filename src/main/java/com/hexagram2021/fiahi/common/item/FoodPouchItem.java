@@ -3,8 +3,12 @@ package com.hexagram2021.fiahi.common.item;
 import com.hexagram2021.fiahi.FreezeItAndHeatIt;
 import com.hexagram2021.fiahi.common.menu.FoodPouchMenu;
 import com.hexagram2021.fiahi.common.network.ClientboundFoodPouchPacket;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -38,5 +42,19 @@ public class FoodPouchItem extends Item {
 		}
 		itemStack.shrink(1);
 		return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
+	}
+
+	public static int getItemCount(CompoundTag nbt) {
+		if(!nbt.contains("Items", Tag.TAG_LIST)) {
+			return 0;
+		}
+		int ret = 0;
+		ListTag list = nbt.getList("Items", Tag.TAG_COMPOUND);
+		for(Tag tag: list) {
+			CompoundTag compoundTag = (CompoundTag)tag;
+			int count = compoundTag.getInt("Count");
+			ret += count;
+		}
+		return ret;
 	}
 }
