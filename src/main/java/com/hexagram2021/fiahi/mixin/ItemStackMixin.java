@@ -24,8 +24,8 @@ public abstract class ItemStackMixin implements IForgeItemStack {
 	@SuppressWarnings("ConstantConditions")
 	@Override @Nullable
 	public CompoundTag getShareTag() {
-		CompoundTag nbt = IForgeItemStack.super.getShareTag();
 		ItemStack current = (ItemStack)(Object)this;
+		CompoundTag nbt = current.getShareTag();
 		LazyOptional<IFrozenRottenFood> c = current.getCapability(FIAHICapabilities.FOOD_CAPABILITY);
 		IFrozenRottenFood food = c.orElse(null);
 		if(food != null) {
@@ -39,11 +39,12 @@ public abstract class ItemStackMixin implements IForgeItemStack {
 
 	@Override
 	public void readShareTag(@Nullable CompoundTag nbt) {
-		IForgeItemStack.super.readShareTag(nbt);
 		ItemStack current = (ItemStack)(Object)this;
 		if(nbt != null && nbt.contains(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE, Tag.TAG_ANY_NUMERIC)) {
 			current.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.setTemperature(nbt.getDouble(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE)));
+			nbt.remove(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE);
 		}
+		current.readShareTag(nbt);
 	}
 
 	@Inject(method = "inventoryTick", at = @At(value = "TAIL"))
