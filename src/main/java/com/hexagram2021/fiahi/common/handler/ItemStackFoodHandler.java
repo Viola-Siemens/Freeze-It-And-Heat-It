@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 
 public class ItemStackFoodHandler implements ICapabilityProvider, INBTSerializable<CompoundTag> {
-	private static final String FIAHI_TAG_TEMPERATURE = "fiahi:temperature";
+	public static final String FIAHI_TAG_TEMPERATURE = "fiahi:temperature";
 
 	private final FrozenRottenFood food;
 	private final LazyOptional<IFrozenRottenFood> holder;

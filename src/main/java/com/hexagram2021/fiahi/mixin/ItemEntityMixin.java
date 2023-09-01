@@ -14,6 +14,6 @@ public abstract class ItemEntityMixin {
 	public void tickFood(CallbackInfo ci) {
 		ItemEntity current = (ItemEntity)(Object)this;
 		current.getItem().getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c ->
-				c.foodTick(c.getTemperature() + 5.0 * Temperature.getTemperatureAt(current.getOnPos(), current.level), current.getItem().getItem()));
+				c.foodTick(c.getTemperature() + 5.0D * Temperature.getTemperatureAt(current.getOnPos(), current.level), current.getItem().getItem()));
 	}
 }

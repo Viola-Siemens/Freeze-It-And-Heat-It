@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(BoilerContainer.class)
 public class BoilerContainerMixin {
 	@Redirect(method = "quickMoveStack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/tags/TagKey;)Z"))
-	private static boolean quickMoveFood(ItemStack instance, TagKey<Item> key) {
+	private boolean quickMoveFood(ItemStack instance, TagKey<Item> key) {
 		return instance.isEdible() || instance.is(key);
 	}
 }

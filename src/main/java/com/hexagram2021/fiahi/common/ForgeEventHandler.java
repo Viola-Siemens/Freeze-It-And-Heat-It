@@ -23,7 +23,9 @@ public final class ForgeEventHandler {
 
 	@SubscribeEvent
 	public static void onAttackItemStackCapability(AttachCapabilitiesEvent<ItemStack> event) {
-		event.addCapability(FOOD_CAPABILITY_ID, new ItemStackFoodHandler(event.getObject()));
+		if(event.getObject().isEdible()) {
+			event.addCapability(FOOD_CAPABILITY_ID, new ItemStackFoodHandler(event.getObject()));
+		}
 	}
 
 	@SubscribeEvent
@@ -38,7 +40,7 @@ public final class ForgeEventHandler {
 							for (int i = 0; i < container.getContainerSize(); ++i) {
 								ItemStack food = container.getItem(i);
 								food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c ->
-										c.foodTick(c.getTemperature() + 5.0 * temp, food.getItem()));
+										c.foodTick(c.getTemperature() + 5.0D * temp, food.getItem()));
 							}
 						}
 					});

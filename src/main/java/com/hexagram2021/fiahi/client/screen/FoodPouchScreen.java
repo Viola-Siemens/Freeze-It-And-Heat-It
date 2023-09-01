@@ -123,9 +123,9 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 			int buttonX = this.leftPos + FOOD_X;
 			int buttonY = this.topPos + FOOD_Y;
 			for(int i = 0; i < this.stackedItems.size(); ++i) {
-				double deltaX = x - (double)(buttonX + i * FOOD_X);
+				double deltaX = x - (double)(buttonX + i * FOOD_IMAGE_SIZE_WIDTH);
 				double deltaY = y - (double)buttonY;
-				if (deltaX >= 0.0D && deltaY >= 0.0D && deltaX < FOOD_X && deltaY < FOOD_Y &&
+				if (deltaX >= 0.0D && deltaY >= 0.0D && deltaX < FOOD_IMAGE_SIZE_WIDTH && deltaY < FOOD_IMAGE_SIZE_HEIGHT &&
 						this.menu.clickMenuButton(Objects.requireNonNull(Objects.requireNonNull(this.minecraft).player), i)) {
 					Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
 					Objects.requireNonNull(this.minecraft.gameMode).handleInventoryButtonClick((this.menu).containerId, i);

@@ -138,6 +138,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 			this.addSlot(new Slot(inventory, k, 8 + k * 18, 142));
 		}
 
+		this.addDataSlots(this.data);
 		this.setContent(content);
 		this.title = title;
 	}
@@ -211,11 +212,14 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		if(count <= 0) {
 			return;
 		}
+		ItemStack itemStack;
 		if(count >= item.getMaxStackSize()) {
-			this.resultSlot.set(new ItemStack(item, item.getMaxStackSize()));
+			itemStack = new ItemStack(item, item.getMaxStackSize());
 		} else {
-			this.resultSlot.set(new ItemStack(item, count));
+			itemStack = new ItemStack(item, count);
 		}
+		itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.setTemperature(this.getTemperature()));
+		this.resultSlot.set(itemStack);
 
 		this.broadcastChanges();
 	}
