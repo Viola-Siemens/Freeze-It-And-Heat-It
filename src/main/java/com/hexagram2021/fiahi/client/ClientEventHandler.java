@@ -31,26 +31,23 @@ public class ClientEventHandler {
 		ItemStack itemStack = event.getItemStack();
 		if(itemStack.isEdible()) {
 			CompoundTag nbt = itemStack.getTag();
-			if(nbt != null) {
-				int temp = nbt.contains(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE, Tag.TAG_ANY_NUMERIC) ?
-						(int)nbt.getDouble(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE) : 0;
-				Component status = new TranslatableComponent("item.fiahi.temperature.normal").withStyle(ChatFormatting.GRAY);
-				int frozenLevel = IFrozenRottenFood.getFrozenLevel(temp);
-				int rottenLevel = IFrozenRottenFood.getRottenLevel(temp);
-				if(frozenLevel > 0) {
-					status = new TranslatableComponent("item.fiahi.temperature.frozen.%d".formatted(Mth.clamp(frozenLevel, 0, 3))).withStyle(ChatFormatting.DARK_AQUA);
-				}
-				if(rottenLevel > 0) {
-					status = new TranslatableComponent("item.fiahi.temperature.rotten.%d".formatted(Mth.clamp(rottenLevel, 0, 3))).withStyle(ChatFormatting.DARK_RED);
-				}
-				event.getToolTip().add(status);
-				if(Minecraft.getInstance().options.advancedItemTooltips) {
-					event.getToolTip().add(new TranslatableComponent("item.fiahi.temperature.description", temp));
-				}
+			int temp = 0;
+			if(nbt != null && nbt.contains(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE, Tag.TAG_ANY_NUMERIC)) {
+				temp = (int)nbt.getDouble(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE);
 			}
-			itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
-
-			});
+			Component status = new TranslatableComponent("item.fiahi.temperature.normal").withStyle(ChatFormatting.GRAY);
+			int frozenLevel = IFrozenRottenFood.getFrozenLevel(temp);
+			int rottenLevel = IFrozenRottenFood.getRottenLevel(temp);
+			if(frozenLevel > 0) {
+				status = new TranslatableComponent("item.fiahi.temperature.frozen.%d".formatted(Mth.clamp(frozenLevel, 0, 3))).withStyle(ChatFormatting.DARK_AQUA);
+			}
+			if(rottenLevel > 0) {
+				status = new TranslatableComponent("item.fiahi.temperature.rotten.%d".formatted(Mth.clamp(rottenLevel, 0, 3))).withStyle(ChatFormatting.DARK_RED);
+			}
+			event.getToolTip().add(status);
+			if(Minecraft.getInstance().options.advancedItemTooltips) {
+				event.getToolTip().add(new TranslatableComponent("item.fiahi.temperature.description", temp));
+			}
 		} else if(itemStack.is(FIAHIItems.FOOD_POUCH.get()) && Minecraft.getInstance().options.advancedItemTooltips) {
 			CompoundTag nbt = itemStack.getTag();
 			if(nbt != null && nbt.contains("temperature", Tag.TAG_ANY_NUMERIC)) {
