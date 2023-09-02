@@ -37,6 +37,7 @@ public interface IFrozenRottenFood {
 		boolean newFlag = this.getTemperature() > 0;
 		int newLevel = newFlag ? this.getRottenLevel() : this.getFrozenLevel();
 		if(level == newLevel && (flag == newFlag || level == 0)) {
+			this.updateFoodTag();
 			return;
 		}
 		if(newLevel > 3) {

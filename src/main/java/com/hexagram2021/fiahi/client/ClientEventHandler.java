@@ -3,7 +3,6 @@ package com.hexagram2021.fiahi.client;
 import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.common.item.FoodPouchItem;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
-import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
 import com.hexagram2021.fiahi.register.FIAHIMobEffects;
 import net.minecraft.ChatFormatting;
