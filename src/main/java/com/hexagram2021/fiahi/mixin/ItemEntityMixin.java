@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ItemEntityMixin {
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V", shift = At.Shift.AFTER))
 	public void tickFood(CallbackInfo ci) {
-		if(ForgeEventHandler.isAvailableToTickFood()) {
-			ItemEntity current = (ItemEntity) (Object) this;
+		ItemEntity current = (ItemEntity) (Object) this;
+		if(!current.level.isClientSide && ForgeEventHandler.isAvailableToTickFood()) {
 			current.getItem().getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c ->
 					c.foodTick(c.getTemperature() + 10.0D * Temperature.getTemperatureAt(current.getOnPos(), current.level), current.getItem().getItem()));
 		}

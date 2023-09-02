@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ItemStackMixin implements IForgeItemStack {
 	@Inject(method = "inventoryTick", at = @At(value = "TAIL"))
 	public void tickFood(Level level, Entity entity, int slot, boolean selected, CallbackInfo ci) {
-		if(ForgeEventHandler.isAvailableToTickFood()) {
+		if(!level.isClientSide && ForgeEventHandler.isAvailableToTickFood()) {
 			ItemStack current = (ItemStack) (Object) this;
 			if (entity instanceof LivingEntity livingEntity) {
 				double temp = Temperature.get(livingEntity, Temperature.Type.CORE);
