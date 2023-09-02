@@ -4,6 +4,7 @@ import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -54,5 +55,14 @@ public class FrozenRottenFood implements IFrozenRottenFood {
 		nbt.putInt(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE, temperature);
 
 		this.self.setTag(nbt);
+	}
+
+	public void syncFoodTag() {
+		CompoundTag nbt = this.self.getTag();
+		if(nbt == null || !nbt.contains(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE, Tag.TAG_ANY_NUMERIC)) {
+			this.setTemperature(0.0D);
+			return;
+		}
+		this.setTemperature(nbt.getDouble(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE));
 	}
 }
