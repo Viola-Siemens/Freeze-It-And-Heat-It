@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public interface IFrozenRottenFood {
 	int FROZEN_ROTTEN_THRESHOLD = 25;	// [-125, 125]
-	double EPS = 1e-4D;
+	double EPS = 1e-2D;
 
 	double getTemperature();
 	void setTemperature(double newTemperature);
@@ -36,13 +36,13 @@ public interface IFrozenRottenFood {
 		this.setTemperature(temp + diff * this.getTemperatureBalanceRate());
 		boolean newFlag = this.getTemperature() > 0;
 		int newLevel = newFlag ? this.getRottenLevel() : this.getFrozenLevel();
-		if(level == newLevel && (flag == newFlag || level == 0)) {
-			this.updateFoodTag();
-			return;
-		}
 		if(newLevel > 3) {
 			newLevel = 3;
 			this.setTemperature((FROZEN_ROTTEN_THRESHOLD * 5 - EPS) * (flag ? 1 : -1));
+		}
+		if(level == newLevel && (flag == newFlag || level == 0)) {
+			this.updateFoodTag();
+			return;
 		}
 		if(level < newLevel) {
 			if(flag == newFlag || level == 0) {

@@ -40,7 +40,7 @@ public final class ForgeEventHandler {
 							for (int i = 0; i < container.getContainerSize(); ++i) {
 								ItemStack food = container.getItem(i);
 								food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c ->
-										c.foodTick(c.getTemperature() + 5.0D * temp, food.getItem()));
+										c.foodTick(c.getTemperature() + 10.0D * temp, food.getItem()));
 							}
 						}
 					});
