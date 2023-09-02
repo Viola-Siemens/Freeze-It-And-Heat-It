@@ -299,7 +299,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 	}
 
 	@Override
-	public void updateFoodFrozenRottenLevel() {
+	public void updateFoodTag() {
 	}
 
 	public int getSelectedIndex() {

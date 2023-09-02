@@ -1,6 +1,8 @@
 package com.hexagram2021.fiahi.client;
 
+import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.common.item.FoodPouchItem;
+import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
 import com.hexagram2021.fiahi.register.FIAHIMobEffects;
@@ -28,18 +30,26 @@ public class ClientEventHandler {
 	public static void onToolTipShow(ItemTooltipEvent event) {
 		ItemStack itemStack = event.getItemStack();
 		if(itemStack.isEdible()) {
-			itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
+			CompoundTag nbt = itemStack.getTag();
+			if(nbt != null) {
+				int temp = nbt.contains(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE, Tag.TAG_ANY_NUMERIC) ?
+						(int)nbt.getDouble(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE) : 0;
 				Component status = new TranslatableComponent("item.fiahi.temperature.normal").withStyle(ChatFormatting.GRAY);
-				if(c.getFrozenLevel() > 0) {
-					status = new TranslatableComponent("item.fiahi.temperature.frozen.%d".formatted(Mth.clamp(c.getFrozenLevel(), 0, 3))).withStyle(ChatFormatting.DARK_AQUA);
+				int frozenLevel = IFrozenRottenFood.getFrozenLevel(temp);
+				int rottenLevel = IFrozenRottenFood.getRottenLevel(temp);
+				if(frozenLevel > 0) {
+					status = new TranslatableComponent("item.fiahi.temperature.frozen.%d".formatted(Mth.clamp(frozenLevel, 0, 3))).withStyle(ChatFormatting.DARK_AQUA);
 				}
-				if(c.getRottenLevel() > 0) {
-					status = new TranslatableComponent("item.fiahi.temperature.rotten.%d".formatted(Mth.clamp(c.getRottenLevel(), 0, 3))).withStyle(ChatFormatting.DARK_RED);
+				if(rottenLevel > 0) {
+					status = new TranslatableComponent("item.fiahi.temperature.rotten.%d".formatted(Mth.clamp(rottenLevel, 0, 3))).withStyle(ChatFormatting.DARK_RED);
 				}
 				event.getToolTip().add(status);
 				if(Minecraft.getInstance().options.advancedItemTooltips) {
-					event.getToolTip().add(new TranslatableComponent("item.fiahi.temperature.description", (int)c.getTemperature()));
+					event.getToolTip().add(new TranslatableComponent("item.fiahi.temperature.description", temp));
 				}
+			}
+			itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
+
 			});
 		} else if(itemStack.is(FIAHIItems.FOOD_POUCH.get()) && Minecraft.getInstance().options.advancedItemTooltips) {
 			CompoundTag nbt = itemStack.getTag();

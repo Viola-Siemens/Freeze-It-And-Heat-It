@@ -48,36 +48,39 @@ public interface IFrozenRottenFood {
 				if(flag && newLevel > 0 && item != null &&
 						FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(Objects.requireNonNull(item.getRegistryName()).toString())) {
 					this.setTemperature(FROZEN_ROTTEN_THRESHOLD * 2 - EPS);
-					return;
-				}
-				if(!flag && newLevel < 0 && item != null &&
+				} else if(!flag && newLevel < 0 && item != null &&
 						FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(Objects.requireNonNull(item.getRegistryName()).toString())) {
 					this.setTemperature(-FROZEN_ROTTEN_THRESHOLD * 2 + EPS);
-					return;
 				}
-				this.updateFoodFrozenRottenLevel();
+				this.updateFoodTag();
 				return;
 			}
 		}
 		this.setTemperature((FROZEN_ROTTEN_THRESHOLD * (1 + level) + EPS) * (flag ? 1 : -1));
+		this.updateFoodTag();
 	}
 
 	default int getFrozenLevel() {
+		return getFrozenLevel((int)this.getTemperature());
+	}
+	default int getRottenLevel() {
+		return getRottenLevel((int)this.getTemperature());
+	}
+
+	static int getFrozenLevel(int temp) {
 		if(!FIAHICommonConfig.ENABLE_FROZEN.get()) {
 			return 0;
 		}
-		int temp = (int)this.getTemperature();
 		return temp >= 0 ? 0 : (-temp - FROZEN_ROTTEN_THRESHOLD) / FROZEN_ROTTEN_THRESHOLD;
 	}
-	default int getRottenLevel() {
+	static int getRottenLevel(int temp) {
 		if(!FIAHICommonConfig.ENABLE_ROTTEN.get()) {
 			return 0;
 		}
-		int temp = (int)this.getTemperature();
 		return temp <= 0 ? 0 : (temp - FROZEN_ROTTEN_THRESHOLD) / FROZEN_ROTTEN_THRESHOLD;
 	}
 
 	void foodTick(double temperature, Item item);
 
-	void updateFoodFrozenRottenLevel();
+	void updateFoodTag();
 }
