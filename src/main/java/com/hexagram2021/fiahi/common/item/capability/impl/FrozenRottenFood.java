@@ -11,8 +11,6 @@ import net.minecraft.world.item.ItemStack;
 public class FrozenRottenFood implements IFrozenRottenFood {
 	private double temperature = 0;
 
-	private int tickAfterCheck = 0;
-
 	private final ItemStack self;
 
 	public FrozenRottenFood(ItemStack self) {
@@ -31,11 +29,6 @@ public class FrozenRottenFood implements IFrozenRottenFood {
 
 	@Override
 	public void foodTick(double temperature, Item item) {
-		if(this.tickAfterCheck < FIAHICommonConfig.TEMPERATURE_CHECKER_INTERVAL.get()) {
-			++this.tickAfterCheck;
-			return;
-		}
-		this.tickAfterCheck = 0;
 		if(this.self.isEdible()) {
 			this.apply(temperature, item);
 		}

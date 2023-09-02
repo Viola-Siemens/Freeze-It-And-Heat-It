@@ -1,5 +1,6 @@
 package com.hexagram2021.fiahi.mixin;
 
+import com.hexagram2021.fiahi.common.ForgeEventHandler;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import dev.momostudios.coldsweat.api.util.Temperature;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -12,8 +13,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ItemEntityMixin {
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V", shift = At.Shift.AFTER))
 	public void tickFood(CallbackInfo ci) {
-		ItemEntity current = (ItemEntity)(Object)this;
-		current.getItem().getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c ->
-				c.foodTick(c.getTemperature() + 10.0D * Temperature.getTemperatureAt(current.getOnPos(), current.level), current.getItem().getItem()));
+		if(ForgeEventHandler.isAvailableToTickFood()) {
+			ItemEntity current = (ItemEntity) (Object) this;
+			current.getItem().getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c ->
+					c.foodTick(c.getTemperature() + 10.0D * Temperature.getTemperatureAt(current.getOnPos(), current.level), current.getItem().getItem()));
+		}
 	}
 }
