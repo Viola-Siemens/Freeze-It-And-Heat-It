@@ -33,6 +33,7 @@ public class IceBoxBlockEntityMixin {
 						itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
 							if(c.getTemperature() > -IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD * 1.6D) {
 								c.setTemperature(c.getTemperature() - 1.0D);
+								c.updateFoodTag();
 							}
 						});
 					}

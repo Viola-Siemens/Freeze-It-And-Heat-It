@@ -113,6 +113,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 					}
 				}
 				super.setChanged();
+				FoodPouchMenu.this.runSlotUpdateListener();
 			}
 		});
 		this.resultSlot = this.addSlot(new Slot(this.resultContainer, 1, 143, 33) {
@@ -123,7 +124,14 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 
 			@Override
 			public void onTake(Player player, ItemStack itemStack) {
-				FoodPouchMenu.this.stackedItems.computeIfPresent(itemStack.getItem(), (item, count) -> count - itemStack.getCount());
+				FoodPouchMenu.this.stackedItems.computeIfPresent(itemStack.getItem(), (item, count) -> {
+					int ret = count - itemStack.getCount();
+					if(ret > 0) {
+						return ret;
+					}
+					return null;
+				});
+				FoodPouchMenu.this.maintainItems();
 				super.onTake(player, itemStack);
 			}
 		});
@@ -218,7 +226,10 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		} else {
 			itemStack = new ItemStack(item, count);
 		}
-		itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.setTemperature(this.getTemperature()));
+		itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
+			c.setTemperature(this.getTemperature());
+			c.updateFoodTag();
+		});
 		this.resultSlot.set(itemStack);
 
 		this.broadcastChanges();

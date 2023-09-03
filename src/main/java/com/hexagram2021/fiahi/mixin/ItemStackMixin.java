@@ -21,7 +21,7 @@ public abstract class ItemStackMixin implements IForgeItemStack {
 			ItemStack current = (ItemStack) (Object) this;
 			if (entity instanceof LivingEntity livingEntity) {
 				double temp = Temperature.get(livingEntity, Temperature.Type.CORE);
-				current.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.foodTick(temp, current.getItem()));
+				current.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> c.foodTick((2.0D * temp + c.getTemperature()) / 3.0D, current.getItem()));
 			}
 		}
 	}
