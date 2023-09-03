@@ -161,45 +161,47 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 
 	@Override
 	public ItemStack quickMoveStack(Player player, int index) {
-		ItemStack itemstack = ItemStack.EMPTY;
+		ItemStack result = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
 		if (slot.hasItem()) {
-			ItemStack itemstack1 = slot.getItem();
-			itemstack = itemstack1.copy();
+			ItemStack slotItem = slot.getItem();
+			result = slotItem.copy();
 			if (index == RESULT_SLOT) {
-				if (!this.moveItemStackTo(itemstack1, INV_SLOT_START, USE_ROW_SLOT_END, true)) {
+				if (!this.moveItemStackTo(slotItem, INV_SLOT_START, USE_ROW_SLOT_END, true)) {
 					return ItemStack.EMPTY;
 				}
 			} else if (index == INPUT_SLOT) {
-				if (!this.moveItemStackTo(itemstack1, INV_SLOT_START, USE_ROW_SLOT_END, false)) {
+				if (!this.moveItemStackTo(slotItem, INV_SLOT_START, USE_ROW_SLOT_END, false)) {
 					return ItemStack.EMPTY;
 				}
-			} else if (itemstack1.isEdible()) {
-				if (!this.moveItemStackTo(itemstack1, INPUT_SLOT, INPUT_SLOT + 1, false)) {
+			} else if (this.inputSlot.mayPlace(slotItem)) {
+				if (!this.moveItemStackTo(slotItem, INPUT_SLOT, INPUT_SLOT + 1, false)) {
 					return ItemStack.EMPTY;
 				}
 			} else if (index >= INV_SLOT_START && index < INV_SLOT_END) {
-				if (!this.moveItemStackTo(itemstack1, USE_ROW_SLOT_START, USE_ROW_SLOT_END, false)) {
+				if (!this.moveItemStackTo(slotItem, USE_ROW_SLOT_START, USE_ROW_SLOT_END, false)) {
 					return ItemStack.EMPTY;
 				}
-			} else if (index >= USE_ROW_SLOT_START && index < USE_ROW_SLOT_END && !this.moveItemStackTo(itemstack1, INV_SLOT_START, INV_SLOT_END, false)) {
+			} else if (index >= USE_ROW_SLOT_START && index < USE_ROW_SLOT_END && !this.moveItemStackTo(slotItem, INV_SLOT_START, INV_SLOT_END, false)) {
 				return ItemStack.EMPTY;
 			}
 
-			if (itemstack1.isEmpty()) {
+			if (slotItem.isEmpty()) {
 				slot.set(ItemStack.EMPTY);
+			} else {
+				slot.setChanged();
 			}
-
-			slot.setChanged();
-			if (itemstack1.getCount() == itemstack.getCount()) {
+			if (slotItem.getCount() == result.getCount()) {
 				return ItemStack.EMPTY;
 			}
 
-			slot.onTake(player, itemstack1);
+			ItemStack takeItem = result.copy();
+			takeItem.setCount(result.getCount() - slotItem.getCount());
+			slot.onTake(player, takeItem);
 			this.broadcastChanges();
 		}
 
-		return itemstack;
+		return result;
 	}
 
 	@Override

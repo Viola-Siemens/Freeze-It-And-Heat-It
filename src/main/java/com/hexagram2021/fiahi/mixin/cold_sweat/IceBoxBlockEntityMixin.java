@@ -31,7 +31,7 @@ public class IceBoxBlockEntityMixin {
 					if (itemStack.isEdible()) {
 						hasItemStacks = true;
 						itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
-							if(c.getTemperature() > -IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD * 1.6D) {
+							if(c.getTemperature() > -IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD) {
 								c.setTemperature(c.getTemperature() - 1.0D);
 								c.updateFoodTag();
 							}
@@ -50,7 +50,7 @@ public class IceBoxBlockEntityMixin {
 					if(itemStack.getItem() == FIAHIItems.FOOD_POUCH.get()) {
 						CompoundTag nbt = itemStack.getOrCreateTag();
 						double itemTemp = nbt.getDouble("temperature");
-						if(itemTemp < IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD * 1.6D && iceboxTE.ticksExisted % (4 * FoodPouchItem.getItemCount(nbt)) == 1) {
+						if(itemTemp < IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD && iceboxTE.ticksExisted % (4 * FoodPouchItem.getItemCount(nbt)) == 1) {
 							hasItemStacks = true;
 							nbt.putDouble("temperature", itemTemp + 0.2D);
 							itemStack.setTag(nbt);
