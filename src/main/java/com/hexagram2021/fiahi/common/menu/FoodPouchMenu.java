@@ -95,7 +95,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 									FoodPouchMenu.this.apply(
 											(totalCount * FoodPouchMenu.this.getTemperature() + c.getTemperature() * itemStack.getCount()) / (totalCount + itemStack.getCount())
 									);
-									itemStack.setCount(0);
+									this.set(ItemStack.EMPTY);
 									return newCount;
 								}
 								int newCount = count + itemStack.getCount();
@@ -109,7 +109,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 								FoodPouchMenu.this.apply(
 										(totalCount * FoodPouchMenu.this.getTemperature() + c.getTemperature() * itemStack.getCount()) / (totalCount + itemStack.getCount())
 								);
-								itemStack.setCount(0);
+								this.set(ItemStack.EMPTY);
 								return newCount;
 							});
 							FoodPouchMenu.this.maintainItems();

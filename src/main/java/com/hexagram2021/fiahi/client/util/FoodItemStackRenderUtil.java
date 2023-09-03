@@ -20,25 +20,27 @@ public class FoodItemStackRenderUtil {
 	}
 
 	private static void render(PoseStack transform, ItemStack itemStack, int blitOffset, int x, int y) {
-		itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
-			TextureAtlasSprite sprite = null;
-			int level = 0;
-			if(c.getFrozenLevel() > 0) {
-				sprite = FIAHIClientContent.FROZEN_SPRITE;
-				level = c.getFrozenLevel();
-			}
-			if(c.getRottenLevel() > 0) {
-				sprite = FIAHIClientContent.ROTTEN_SPRITE;
-				level = c.getRottenLevel();
-			}
-			if(sprite != null && level > 0) {
-				RenderStateShard.TRANSLUCENT_TRANSPARENCY.setupRenderState();
-				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, ((float)level + 1.0F) / 4.0F);
-				RenderSystem.setShader(GameRenderer::getPositionTexShader);
-				RenderSystem.setShaderTexture(0, sprite.atlas().location());
-				GuiComponent.blit(transform, x, y, blitOffset + 100, 16, 16, sprite);
-				RenderStateShard.TRANSLUCENT_TRANSPARENCY.clearRenderState();
-			}
-		});
+		if(itemStack.isEdible()) {
+			itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
+				TextureAtlasSprite sprite = null;
+				int level = 0;
+				if (c.getFrozenLevel() > 0) {
+					sprite = FIAHIClientContent.FROZEN_SPRITE;
+					level = c.getFrozenLevel();
+				}
+				if (c.getRottenLevel() > 0) {
+					sprite = FIAHIClientContent.ROTTEN_SPRITE;
+					level = c.getRottenLevel();
+				}
+				if (sprite != null && level > 0) {
+					RenderStateShard.TRANSLUCENT_TRANSPARENCY.setupRenderState();
+					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, ((float) level + 1.0F) / 4.0F);
+					RenderSystem.setShader(GameRenderer::getPositionTexShader);
+					RenderSystem.setShaderTexture(0, sprite.atlas().location());
+					GuiComponent.blit(transform, x, y, blitOffset + 100, 16, 16, sprite);
+					RenderStateShard.TRANSLUCENT_TRANSPARENCY.clearRenderState();
+				}
+			});
+		}
 	}
 }
