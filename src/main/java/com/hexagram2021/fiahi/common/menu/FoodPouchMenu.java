@@ -21,10 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRottenFood {
 	public static final int INPUT_SLOT = 0;
@@ -54,7 +51,14 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 			FoodPouchMenu.this.runSlotUpdateListener();
 		}
 	};
-	final ResultContainer resultContainer = new ResultContainer();
+	final ResultContainer resultContainer = new ResultContainer() {
+		@Override
+		public void setChanged() {
+			super.setChanged();
+			FoodPouchMenu.this.slotsChanged(this);
+			FoodPouchMenu.this.runSlotUpdateListener();
+		}
+	};
 
 	final ContainerData data = new SimpleContainerData(2);	//temperature, selectedIndex
 
@@ -113,7 +117,6 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 					}
 				}
 				super.setChanged();
-				FoodPouchMenu.this.runSlotUpdateListener();
 			}
 		});
 		this.resultSlot = this.addSlot(new Slot(this.resultContainer, 1, 143, 33) {
@@ -281,7 +284,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 	}
 
 	private void maintainItems() {
-		this.items = this.stackedItems.keySet().stream().toList();
+		this.items = this.stackedItems.keySet().stream().sorted(Comparator.comparing(item -> Objects.requireNonNull(item.getRegistryName()))).toList();
 	}
 
 	public void setStackedItems(Map<Item, Integer> stackedItems) {
