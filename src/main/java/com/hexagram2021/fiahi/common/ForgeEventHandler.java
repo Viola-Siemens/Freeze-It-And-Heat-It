@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -47,6 +48,9 @@ public final class ForgeEventHandler {
 				if(levelChunk != null) {
 					levelChunk.getBlockEntities().forEach((blockPos, blockEntity) -> {
 						if (blockEntity.hasLevel() && blockEntity instanceof Container container) {
+							if(container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
+								return;
+							}
 							double temp = Temperature.getTemperatureAt(blockPos, Objects.requireNonNull(blockEntity.getLevel()));
 							for (int i = 0; i < container.getContainerSize(); ++i) {
 								ItemStack food = container.getItem(i);
