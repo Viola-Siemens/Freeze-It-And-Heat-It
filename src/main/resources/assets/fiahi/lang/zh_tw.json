@@ -1,0 +1,21 @@
+{
+  "language": "Traditional Chinese",
+  "language.code": "zh_tw",
+  "language.region": "Taiwan, China",
+  "itemGroup.fiahi": "冷汗：食物冷凍與加熱",
+
+  "item.fiahi.food_pouch": "食物口袋",
+  "item.fiahi.temperature.description": "溫度：%d",
+  "item.fiahi.temperature.normal": "新鮮食物",
+  "item.fiahi.temperature.frozen.1": "輕微凍結",
+  "item.fiahi.temperature.frozen.2": "大部分凍結",
+  "item.fiahi.temperature.frozen.3": "完全凍結",
+  "item.fiahi.temperature.rotten.1": "輕微腐爛",
+  "item.fiahi.temperature.rotten.2": "大部分腐爛",
+  "item.fiahi.temperature.rotten.3": "完全腐爛",
+
+  "gui.fiahi.temperature.description": "口袋溫度：%f",
+  "gui.fiahi.count.description": "剩餘：%d",
+
+  "effect.fiahi.shiver": "寒顫"
+}

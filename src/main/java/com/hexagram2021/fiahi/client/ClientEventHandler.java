@@ -64,7 +64,7 @@ public class ClientEventHandler {
 
 			MobEffectInstance instance = player.getEffect(FIAHIMobEffects.SHIVER.get());
 			if(instance != null) {
-				float level = instance.getAmplifier() * 0.025F;
+				float level = instance.getAmplifier() / 30.0F;
 
 				double tickTime = player.tickCount + event.getPartialTicks();
 				float shiverAmount = (float) (Math.sin((tickTime) * 3) * level * (10 * frameTime));
