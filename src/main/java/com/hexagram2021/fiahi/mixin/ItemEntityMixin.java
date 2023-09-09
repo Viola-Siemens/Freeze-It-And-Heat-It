@@ -16,7 +16,7 @@ public abstract class ItemEntityMixin {
 		ItemEntity current = (ItemEntity) (Object) this;
 		if(!current.level.isClientSide && ForgeEventHandler.isAvailableToTickFood()) {
 			current.getItem().getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c ->
-					c.foodTick(c.getTemperature() + 10.0D * Temperature.getTemperatureAt(current.getOnPos(), current.level), current.getItem().getItem()));
+					c.foodTick(c.getTemperature() + 5.0D * Temperature.getTemperatureAt(current.getOnPos(), current.level), current.getItem().getItem()));
 		}
 	}
 }
