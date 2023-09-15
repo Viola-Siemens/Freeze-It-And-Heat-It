@@ -34,8 +34,8 @@ public final class ForgeEventHandler {
 	}
 
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.WorldTickEvent event) {
-		if(event.phase == TickEvent.Phase.END && event.world instanceof ServerLevel serverLevel) {
+	public static void onLevelTick(TickEvent.LevelTickEvent event) {
+		if(event.phase == TickEvent.Phase.END && event.level instanceof ServerLevel serverLevel) {
 			if(serverLevel.dimension().equals(Level.OVERWORLD)) {
 				if(tickAfterCheck < FIAHICommonConfig.TEMPERATURE_CHECKER_INTERVAL.get()) {
 					++tickAfterCheck;

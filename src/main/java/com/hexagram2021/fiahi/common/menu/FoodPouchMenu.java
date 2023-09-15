@@ -1,6 +1,7 @@
 package com.hexagram2021.fiahi.common.menu;
 
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
+import com.hexagram2021.fiahi.common.util.RegistryHelper;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
 import com.hexagram2021.fiahi.register.FIAHIMenuTypes;
@@ -286,7 +287,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 	}
 
 	private void maintainItems() {
-		this.items = this.stackedItems.keySet().stream().sorted(Comparator.comparing(item -> Objects.requireNonNull(item.getRegistryName()))).toList();
+		this.items = this.stackedItems.keySet().stream().sorted(Comparator.comparing(RegistryHelper::getRegistryName)).toList();
 	}
 
 	public void setStackedItems(Map<Item, Integer> stackedItems) {
