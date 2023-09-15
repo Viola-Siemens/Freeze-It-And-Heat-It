@@ -50,7 +50,8 @@ public class IceBoxBlockEntityMixin {
 					if(itemStack.getItem() == FIAHIItems.FOOD_POUCH.get()) {
 						CompoundTag nbt = itemStack.getOrCreateTag();
 						double itemTemp = nbt.getDouble("temperature");
-						if(itemTemp < IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD && iceboxTE.ticksExisted % (4 * FoodPouchItem.getItemCount(nbt)) == 1) {
+						int itemCount = FoodPouchItem.getItemCount(nbt);
+						if(itemCount > 0 && itemTemp < IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD && iceboxTE.ticksExisted % (4 * itemCount) == 1) {
 							hasItemStacks = true;
 							nbt.putDouble("temperature", itemTemp + 0.2D);
 							itemStack.setTag(nbt);
