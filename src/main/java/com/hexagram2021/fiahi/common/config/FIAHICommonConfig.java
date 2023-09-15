@@ -43,14 +43,14 @@ public final class FIAHICommonConfig {
 			ENABLE_ROTTEN = BUILDER.comment("If false, foods will never be rotten.")
 					.define("ENABLE_ROTTEN", true);
 			TEMPERATURE_CHECKER_INTERVAL = BUILDER.comment("How many ticks after a single check will it try again to modify the temperature of the food.")
-					.defineInRange("TEMPERATURE_CHECKER_INTERVAL", 100, 1, 24000);
+					.defineInRange("TEMPERATURE_CHECKER_INTERVAL", 120, 1, 24000);
 			TEMPERATURE_BALANCE_RATE = BUILDER.comment("When trying to modify the temperature of the food each time, how many difference will be applied.")
 					.defineInRange("TEMPERATURE_BALANCE_RATE", 10, 1, 100);
 
 			FROZEN_SPEED_MULTIPLIER = BUILDER.comment("How fast will a food item get frozen. The bigger, the faster.")
 					.defineInRange("FROZEN_SPEED_MULTIPLIER", 1.0D, 0.01D, 100.0D);
 			ROTTEN_SPEED_MULTIPLIER = BUILDER.comment("How fast will a food item get rotten. The bigger, the faster.")
-					.defineInRange("ROTTEN_SPEED_MULTIPLIER", 0.8D, 0.01D, 100.0D);
+					.defineInRange("ROTTEN_SPEED_MULTIPLIER", 0.75D, 0.01D, 100.0D);
 		BUILDER.pop();
 		SPEC = BUILDER.build();
 	}
