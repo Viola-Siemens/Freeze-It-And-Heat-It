@@ -1,6 +1,5 @@
 package com.hexagram2021.fiahi.common.item.capability.impl;
 
-import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
 import net.minecraft.nbt.CompoundTag;

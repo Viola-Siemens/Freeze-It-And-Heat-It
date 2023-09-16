@@ -1,6 +1,7 @@
 package com.hexagram2021.fiahi;
 
 import com.hexagram2021.fiahi.common.FIAHIContent;
+import com.hexagram2021.fiahi.common.ModVanillaCompat;
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.network.ClientboundFoodPouchPacket;
 import com.hexagram2021.fiahi.common.network.IFIAHIPacket;
@@ -45,6 +46,7 @@ public class FreezeItAndHeatIt {
 	}
 
 	private void setup(final FMLCommonSetupEvent event) {
+		event.enqueueWork(ModVanillaCompat::setup);
 		registerMessage(ClientboundFoodPouchPacket.class, ClientboundFoodPouchPacket::new);
 	}
 

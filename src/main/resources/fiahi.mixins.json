@@ -4,8 +4,8 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "fiahi.refmap.json",
   "mixins": [
+    "InventoryMixin",
     "ItemEntityMixin",
-    "ItemStackMixin",
     "LivingEntityMixin",
     "cold_sweat.BoilerBlockEntityMixin",
     "cold_sweat.BoilerContainerMixin",

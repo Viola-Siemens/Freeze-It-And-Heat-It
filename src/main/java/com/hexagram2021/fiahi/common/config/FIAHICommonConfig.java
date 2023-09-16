@@ -50,7 +50,7 @@ public final class FIAHICommonConfig {
 			FROZEN_SPEED_MULTIPLIER = BUILDER.comment("How fast will a food item get frozen. The bigger, the faster.")
 					.defineInRange("FROZEN_SPEED_MULTIPLIER", 1.0D, 0.01D, 100.0D);
 			ROTTEN_SPEED_MULTIPLIER = BUILDER.comment("How fast will a food item get rotten. The bigger, the faster.")
-					.defineInRange("ROTTEN_SPEED_MULTIPLIER", 0.75D, 0.01D, 100.0D);
+					.defineInRange("ROTTEN_SPEED_MULTIPLIER", 0.6D, 0.01D, 100.0D);
 		BUILDER.pop();
 		SPEC = BUILDER.build();
 	}
