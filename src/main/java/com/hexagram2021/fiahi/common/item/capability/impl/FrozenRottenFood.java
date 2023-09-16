@@ -28,7 +28,7 @@ public class FrozenRottenFood implements IFrozenRottenFood {
 
 	@Override
 	public void foodTick(double temperature, Item item) {
-		if(this.self.isEdible()) {
+		if(IFrozenRottenFood.canBeFrozenRotten(this.self)) {
 			this.apply(temperature, item);
 		}
 	}

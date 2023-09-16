@@ -31,10 +31,10 @@ public class InventoryMixin {
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/NonNullList;forEach(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER))
 	public void convertFoodIntoLeftoverIfFullyRotten(CallbackInfo ci) {
 		Level level = this.player.level;
-		for(NonNullList<ItemStack> nonnulllist : this.compartments) {
-			for(int i = 0; i < nonnulllist.size(); ++i) {
-				if (!nonnulllist.get(i).isEmpty()) {
-					ItemStack food = nonnulllist.get(i);
+		for(NonNullList<ItemStack> itemStackList : this.compartments) {
+			for(int i = 0; i < itemStackList.size(); ++i) {
+				if (!itemStackList.get(i).isEmpty()) {
+					ItemStack food = itemStackList.get(i);
 					if(!level.isClientSide && ForgeEventHandler.isAvailableToTickFood()) {
 						double temp = Temperature.get(this.player, Temperature.Type.CORE);
 						int finalI = i;
@@ -43,7 +43,7 @@ public class InventoryMixin {
 							if(c.getTemperature() > 120) {
 								FoodProperties foodProperties = food.getItem().getFoodProperties();
 								if(foodProperties != null) {
-									nonnulllist.set(finalI, new ItemStack(foodProperties.isMeat() ? FIAHIItems.LEFTOVER_MEAT : FIAHIItems.LEFTOVER_VEGETABLE, food.getCount()));
+									itemStackList.set(finalI, new ItemStack(foodProperties.isMeat() ? FIAHIItems.LEFTOVER_MEAT : FIAHIItems.LEFTOVER_VEGETABLE, food.getCount()));
 								}
 							}
 						});

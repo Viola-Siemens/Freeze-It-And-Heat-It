@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.Objects;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
+import static com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood.canBeFrozenRotten;
 import static com.hexagram2021.fiahi.register.FIAHICapabilities.FOOD_CAPABILITY_ID;
 
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -30,7 +31,7 @@ public final class ForgeEventHandler {
 
 	@SubscribeEvent
 	public static void onAttackItemStackCapability(AttachCapabilitiesEvent<ItemStack> event) {
-		if(event.getObject().isEdible()) {
+		if(canBeFrozenRotten(event.getObject())) {
 			event.addCapability(FOOD_CAPABILITY_ID, new ItemStackFoodHandler(event.getObject()));
 		}
 	}

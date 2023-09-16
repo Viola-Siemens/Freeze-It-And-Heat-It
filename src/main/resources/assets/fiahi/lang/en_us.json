@@ -5,6 +5,8 @@
   "itemGroup.fiahi": "Freeze It, and Heat It!",
 
   "item.fiahi.food_pouch": "Food Pouch",
+  "item.fiahi.leftover_meat": "Rotten Leftover Meat",
+  "item.fiahi.leftover_vegetable": "Rotten Leftover",
   "item.fiahi.temperature.description": "Temperature: %d",
   "item.fiahi.temperature.normal": "Fresh Food",
   "item.fiahi.temperature.frozen.1": "Lightly Frozen",

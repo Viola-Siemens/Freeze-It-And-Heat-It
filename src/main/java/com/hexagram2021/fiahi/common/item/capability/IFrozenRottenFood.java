@@ -3,10 +3,12 @@ package com.hexagram2021.fiahi.common.item.capability;
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import dev.momostudios.coldsweat.config.ConfigSettings;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
 import static com.hexagram2021.fiahi.common.util.RegistryHelper.getRegistryName;
+import static com.hexagram2021.fiahi.register.FIAHIItemTags.LEFTOVERS;
 
 public interface IFrozenRottenFood {
 	int FROZEN_ROTTEN_THRESHOLD = 25;	// [-125, 125]
@@ -85,4 +87,8 @@ public interface IFrozenRottenFood {
 	void foodTick(double temperature, Item item);
 
 	void updateFoodTag();
+
+	static boolean canBeFrozenRotten(ItemStack itemStack) {
+		return itemStack.isEdible() && !itemStack.is(LEFTOVERS);
+	}
 }

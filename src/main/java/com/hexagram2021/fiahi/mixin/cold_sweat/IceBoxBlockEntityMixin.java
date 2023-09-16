@@ -17,6 +17,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood.canBeFrozenRotten;
+
 @Mixin(IceboxBlockEntity.class)
 public class IceBoxBlockEntityMixin {
 	@Inject(method = "tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At(value = "INVOKE", target = "Ldev/momostudios/coldsweat/common/blockentity/IceboxBlockEntity;tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", shift = At.Shift.BEFORE), remap = false)
@@ -28,7 +30,7 @@ public class IceBoxBlockEntityMixin {
 
 				for(int itemFuel = 1; itemFuel < IceboxBlockEntity.SLOTS; ++itemFuel) {
 					ItemStack itemStack = iceboxTE.getItem(itemFuel);
-					if (itemStack.isEdible()) {
+					if (canBeFrozenRotten(itemStack)) {
 						hasItemStacks = true;
 						itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
 							if(c.getTemperature() > -IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD) {

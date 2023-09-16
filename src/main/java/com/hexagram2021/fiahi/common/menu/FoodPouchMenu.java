@@ -80,7 +80,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		this.inputSlot = this.addSlot(new Slot(this.container, 0, 20, 33) {
 			@Override
 			public boolean mayPlace(ItemStack itemStack) {
-				return super.mayPlace(itemStack) && itemStack.isEdible();
+				return super.mayPlace(itemStack) && IFrozenRottenFood.canBeFrozenRotten(itemStack);
 			}
 
 			@Override

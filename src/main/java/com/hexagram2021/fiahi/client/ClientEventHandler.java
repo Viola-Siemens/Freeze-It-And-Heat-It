@@ -21,13 +21,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
+import static com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood.canBeFrozenRotten;
 
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientEventHandler {
 	@SubscribeEvent
 	public static void onToolTipShow(ItemTooltipEvent event) {
 		ItemStack itemStack = event.getItemStack();
-		if(itemStack.isEdible()) {
+		if(canBeFrozenRotten(itemStack)) {
 			CompoundTag nbt = itemStack.getTag();
 			int temp = 0;
 			if(nbt != null && nbt.contains(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE, Tag.TAG_ANY_NUMERIC)) {
