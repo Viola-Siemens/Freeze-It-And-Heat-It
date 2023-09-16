@@ -28,7 +28,7 @@ public class InventoryMixin {
 	public Player player;
 
 	@SuppressWarnings("deprecation")
-	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/NonNullList;forEach(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER))
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/NonNullList;forEach(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER), remap = false)
 	public void convertFoodIntoLeftoverIfFullyRotten(CallbackInfo ci) {
 		Level level = this.player.level;
 		for(NonNullList<ItemStack> itemStackList : this.compartments) {
