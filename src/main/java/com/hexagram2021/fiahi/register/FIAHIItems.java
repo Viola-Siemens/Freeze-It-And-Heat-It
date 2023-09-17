@@ -19,18 +19,18 @@ public class FIAHIItems {
 
 	public static final ItemEntry<FoodPouchItem> FOOD_POUCH = ItemEntry.register("food_pouch", () -> new FoodPouchItem(new Item.Properties().stacksTo(1).tab(FreezeItAndHeatIt.ITEM_GROUP)));
 
+	public static final ItemEntry<Item> LEFTOVER_MEAT = ItemEntry.register("leftover_meat", () -> new Item(new Item.Properties().food(FIAHIFoods.LEFTOVER_MEAT).tab(FreezeItAndHeatIt.ITEM_GROUP)));
+	public static final ItemEntry<Item> LEFTOVER_VEGETABLE = ItemEntry.register("leftover_vegetable", () -> new Item(new Item.Properties().food(FIAHIFoods.LEFTOVER_VEGETABLE).tab(FreezeItAndHeatIt.ITEM_GROUP)));
+
 	public static void init(IEventBus bus) {
 		REGISTER.register(bus);
 	}
 
 	public static class ItemEntry<T extends Item> implements Supplier<T>, ItemLike {
-		//public static final List<ItemEntry<? extends Item>> ALL_ITEMS = Lists.newArrayList();
-
 		private final RegistryObject<T> regObject;
 
 		private ItemEntry(RegistryObject<T> regObject) {
 			this.regObject = regObject;
-			//ALL_ITEMS.add(this);
 		}
 
 		public static <T extends Item> ItemEntry<T> register(String name, Supplier<? extends T> make) {

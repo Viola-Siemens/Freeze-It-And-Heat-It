@@ -3,9 +3,11 @@ package com.hexagram2021.fiahi.common;
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
+import com.hexagram2021.fiahi.register.FIAHIItems;
 import dev.momostudios.coldsweat.api.util.Temperature;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
@@ -18,6 +20,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.Objects;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
+import static com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood.canBeFrozenRotten;
 import static com.hexagram2021.fiahi.register.FIAHICapabilities.FOOD_CAPABILITY_ID;
 
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -28,14 +31,15 @@ public final class ForgeEventHandler {
 
 	@SubscribeEvent
 	public static void onAttackItemStackCapability(AttachCapabilitiesEvent<ItemStack> event) {
-		if(event.getObject().isEdible()) {
+		if(canBeFrozenRotten(event.getObject())) {
 			event.addCapability(FOOD_CAPABILITY_ID, new ItemStackFoodHandler(event.getObject()));
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.WorldTickEvent event) {
-		if(event.phase == TickEvent.Phase.END && event.world instanceof ServerLevel serverLevel) {
+	public static void onLevelTick(TickEvent.LevelTickEvent event) {
+		if(event.phase == TickEvent.Phase.END && event.level instanceof ServerLevel serverLevel) {
 			if(serverLevel.dimension().equals(Level.OVERWORLD)) {
 				if(tickAfterCheck < FIAHICommonConfig.TEMPERATURE_CHECKER_INTERVAL.get()) {
 					++tickAfterCheck;
@@ -54,8 +58,16 @@ public final class ForgeEventHandler {
 							double temp = Temperature.getTemperatureAt(blockPos, Objects.requireNonNull(blockEntity.getLevel()));
 							for (int i = 0; i < container.getContainerSize(); ++i) {
 								ItemStack food = container.getItem(i);
-								food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c ->
-										c.foodTick(c.getTemperature() + 2.0D * temp, food.getItem()));
+								int finalI = i;
+								food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
+									c.foodTick(c.getTemperature() + 2.0D * temp, food.getItem());
+									if(c.getTemperature() > 120) {
+										FoodProperties foodProperties = food.getItem().getFoodProperties();
+										if(foodProperties != null) {
+											container.setItem(finalI, new ItemStack(foodProperties.isMeat() ? FIAHIItems.LEFTOVER_MEAT : FIAHIItems.LEFTOVER_VEGETABLE, food.getCount()));
+										}
+									}
+								});
 							}
 						}
 					});

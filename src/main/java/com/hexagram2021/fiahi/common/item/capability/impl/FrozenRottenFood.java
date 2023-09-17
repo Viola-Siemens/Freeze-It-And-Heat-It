@@ -1,6 +1,5 @@
 package com.hexagram2021.fiahi.common.item.capability.impl;
 
-import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
 import net.minecraft.nbt.CompoundTag;
@@ -29,7 +28,7 @@ public class FrozenRottenFood implements IFrozenRottenFood {
 
 	@Override
 	public void foodTick(double temperature, Item item) {
-		if(this.self.isEdible()) {
+		if(IFrozenRottenFood.canBeFrozenRotten(this.self)) {
 			this.apply(temperature, item);
 		}
 	}

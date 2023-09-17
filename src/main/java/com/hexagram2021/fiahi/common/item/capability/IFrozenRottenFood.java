@@ -3,9 +3,12 @@ package com.hexagram2021.fiahi.common.item.capability;
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import dev.momostudios.coldsweat.config.ConfigSettings;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
+
+import static com.hexagram2021.fiahi.common.util.RegistryHelper.getRegistryName;
+import static com.hexagram2021.fiahi.register.FIAHIItemTags.LEFTOVERS;
 
 public interface IFrozenRottenFood {
 	int FROZEN_ROTTEN_THRESHOLD = 25;	// [-125, 125]
@@ -47,10 +50,10 @@ public interface IFrozenRottenFood {
 		if(level < newLevel) {
 			if(flag == newFlag || level == 0) {
 				if(flag && newLevel > 0 && item != null &&
-						FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(Objects.requireNonNull(item.getRegistryName()).toString())) {
+						FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(getRegistryName(item).toString())) {
 					this.setTemperature(FROZEN_ROTTEN_THRESHOLD * 2 - EPS);
 				} else if(!flag && newLevel < 0 && item != null &&
-						FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(Objects.requireNonNull(item.getRegistryName()).toString())) {
+						FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(getRegistryName(item).toString())) {
 					this.setTemperature(-FROZEN_ROTTEN_THRESHOLD * 2 + EPS);
 				}
 				this.updateFoodTag();
@@ -84,4 +87,8 @@ public interface IFrozenRottenFood {
 	void foodTick(double temperature, Item item);
 
 	void updateFoodTag();
+
+	static boolean canBeFrozenRotten(ItemStack itemStack) {
+		return itemStack.isEdible() && !itemStack.is(LEFTOVERS);
+	}
 }

@@ -5,6 +5,8 @@
   "itemGroup.fiahi": "冷汗：食物冷冻与加热",
 
   "item.fiahi.food_pouch": "食物口袋",
+  "item.fiahi.leftover_meat": "腐烂的剩肉",
+  "item.fiahi.leftover_vegetable": "腐烂的剩菜",
   "item.fiahi.temperature.description": "温度：%d",
   "item.fiahi.temperature.normal": "新鲜食物",
   "item.fiahi.temperature.frozen.1": "轻微冻结",

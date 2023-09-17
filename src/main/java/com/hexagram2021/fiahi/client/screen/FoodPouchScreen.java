@@ -8,7 +8,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
@@ -107,12 +106,12 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 	public void renderLabels(PoseStack transform, int mouseX, int mouseY) {
 		super.renderLabels(transform, mouseX, mouseY);
 		this.font.draw(
-				transform, new TranslatableComponent("gui.fiahi.temperature.description", this.menu.getTemperature()),
+				transform, Component.translatable("gui.fiahi.temperature.description", this.menu.getTemperature()),
 				TEMPERATURE_X, TEMPERATURE_Y, 0x404040
 		);
 		this.font.draw(
 				transform,
-				new TranslatableComponent("gui.fiahi.count.description", this.menu.getItemStockCount()),
+				Component.translatable("gui.fiahi.count.description", this.menu.getItemStockCount()),
 				COUNT_X, COUNT_Y, 0x404040
 		);
 	}

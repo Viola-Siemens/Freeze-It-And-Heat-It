@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
+import static com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood.canBeFrozenRotten;
+
 public class FoodItemStackRenderUtil {
 	public static void renderSpecialFood(PoseStack transform, Slot slot, int blitOffset) {
 		render(transform, slot.getItem(), blitOffset, slot.x, slot.y);
@@ -20,7 +22,7 @@ public class FoodItemStackRenderUtil {
 	}
 
 	private static void render(PoseStack transform, ItemStack itemStack, int blitOffset, int x, int y) {
-		if(itemStack.isEdible()) {
+		if(canBeFrozenRotten(itemStack)) {
 			itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
 				TextureAtlasSprite sprite = null;
 				int level = 0;
