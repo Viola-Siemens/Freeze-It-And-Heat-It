@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[43,)"
+loaderVersion="[40,)"
 license="GPL v3.0"
 issueTrackerURL="https://github.com/Viola-Siemens/Freeze-It-And-Heat-It/issues"
 
@@ -17,13 +17,13 @@ With this mod, your food will become frozen or rotten in very low or high temper
 [[dependencies.fiahi]]
     modId="forge"
     mandatory=true
-    versionRange="[43,)"
+    versionRange="[40,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fiahi]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.2,1.19.3)"
+    versionRange="[1.18.2,1.19)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fiahi]]

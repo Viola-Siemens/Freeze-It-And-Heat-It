@@ -18,12 +18,12 @@ public interface RegistryHelper {
 		return Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block));
 	}
 	static ResourceLocation getRegistryName(VillagerProfession profession) {
-		return Objects.requireNonNull(ForgeRegistries.VILLAGER_PROFESSIONS.getKey(profession));
+		return Objects.requireNonNull(ForgeRegistries.PROFESSIONS.getKey(profession));
 	}
 	static ResourceLocation getRegistryName(Biome biome) {
 		return Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(biome));
 	}
 	static ResourceLocation getRegistryName(EntityType<?> entityType) {
-		return Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getKey(entityType));
+		return Objects.requireNonNull(ForgeRegistries.ENTITIES.getKey(entityType));
 	}
 }
