@@ -1,7 +1,7 @@
 package com.hexagram2021.fiahi.common.item.capability;
 
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
-import dev.momostudios.coldsweat.config.ConfigSettings;
+import com.momosoftworks.coldsweat.config.ConfigSettings;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 

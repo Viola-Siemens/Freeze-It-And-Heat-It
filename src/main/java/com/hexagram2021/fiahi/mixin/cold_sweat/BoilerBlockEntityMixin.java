@@ -4,7 +4,7 @@ import com.hexagram2021.fiahi.common.item.FoodPouchItem;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
-import dev.momostudios.coldsweat.common.blockentity.BoilerBlockEntity;
+import com.momosoftworks.coldsweat.common.blockentity.BoilerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +20,7 @@ import static com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood.ca
 
 @Mixin(BoilerBlockEntity.class)
 public class BoilerBlockEntityMixin {
-	@Inject(method = "tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At(value = "INVOKE", target = "Ldev/momostudios/coldsweat/common/blockentity/BoilerBlockEntity;tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", shift = At.Shift.BEFORE), remap = false)
+	@Inject(method = "tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At(value = "INVOKE", target = "Lcom/momosoftworks/coldsweat/common/blockentity/BoilerBlockEntity;tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", shift = At.Shift.BEFORE), remap = false)
 	private static <T extends BlockEntity> void tickFoods(Level level, BlockPos pos, BlockState state, T te, CallbackInfo ci) {
 		BoilerBlockEntity boilerTE = (BoilerBlockEntity)te;
 		if (boilerTE.getFuel() > 0) {

@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood.canBeFrozenRotten;
 
-@Mixin(targets = "dev/momostudios/coldsweat/common/container/IceboxContainer$2")
+@Mixin(targets = "com/momosoftworks/coldsweat/common/container/IceboxContainer$2")
 public class IceboxContainerSlotMixin {
 	@Inject(method = "mayPlace", at = @At(value = "HEAD"), cancellable = true)
 	public void mayFoodPlace(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {

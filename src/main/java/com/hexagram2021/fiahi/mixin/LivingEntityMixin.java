@@ -2,7 +2,7 @@ package com.hexagram2021.fiahi.mixin;
 
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIMobEffects;
-import dev.momostudios.coldsweat.api.util.Temperature;
+import com.momosoftworks.coldsweat.api.util.Temperature;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;

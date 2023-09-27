@@ -1,6 +1,6 @@
 package com.hexagram2021.fiahi.mixin.cold_sweat;
 
-import dev.momostudios.coldsweat.common.container.BoilerContainer;
+import com.momosoftworks.coldsweat.common.container.BoilerContainer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
