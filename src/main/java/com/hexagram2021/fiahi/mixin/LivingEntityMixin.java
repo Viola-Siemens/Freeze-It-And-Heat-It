@@ -2,7 +2,7 @@ package com.hexagram2021.fiahi.mixin;
 
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIMobEffects;
-import dev.momostudios.coldsweat.api.util.Temperature;
+import com.momosoftworks.coldsweat.api.util.Temperature;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,12 +22,12 @@ public class LivingEntityMixin {
 				entity.addEffect(new MobEffectInstance(FIAHIMobEffects.SHIVER.get(), c.getFrozenLevel() * 200, c.getFrozenLevel() - 1));
 				entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, c.getFrozenLevel() * 400, c.getFrozenLevel() - 1));
 				entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, c.getFrozenLevel() * 400, c.getFrozenLevel() - 1));
-				Temperature.add(entity, -c.getFrozenLevel() * 2, Temperature.Type.CORE);
+				Temperature.add(entity, -c.getFrozenLevel() * 5, Temperature.Type.CORE);
 			}
 			if(c.getRottenLevel() > 0) {
 				entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, c.getRottenLevel() * 200, c.getRottenLevel() - 1));
 				entity.addEffect(new MobEffectInstance(MobEffects.HUNGER, c.getRottenLevel() * 200, c.getRottenLevel() - 1));
-				Temperature.add(entity, c.getRottenLevel() * 2, Temperature.Type.CORE);
+				Temperature.add(entity, c.getRottenLevel() * 5, Temperature.Type.CORE);
 			}
 		});
 	}

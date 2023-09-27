@@ -3,7 +3,7 @@ package com.hexagram2021.fiahi.mixin;
 import com.hexagram2021.fiahi.common.ForgeEventHandler;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
-import dev.momostudios.coldsweat.api.util.Temperature;
+import com.momosoftworks.coldsweat.api.util.Temperature;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;

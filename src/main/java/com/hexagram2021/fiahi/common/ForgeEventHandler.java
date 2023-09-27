@@ -4,7 +4,7 @@ import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
-import dev.momostudios.coldsweat.api.util.Temperature;
+import com.momosoftworks.coldsweat.api.util.Temperature;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.food.FoodProperties;
