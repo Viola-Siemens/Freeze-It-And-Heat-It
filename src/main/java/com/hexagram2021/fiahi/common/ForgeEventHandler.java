@@ -49,7 +49,7 @@ public final class ForgeEventHandler {
 			}
 			serverLevel.getChunkSource().chunkMap.getChunks().forEach(chunk -> {
 				LevelChunk levelChunk = chunk.getFullChunk();
-				if(levelChunk != null) {
+				if(levelChunk != null && !levelChunk.isEmpty()) {
 					levelChunk.getBlockEntities().forEach((blockPos, blockEntity) -> {
 						if (blockEntity.hasLevel() && blockEntity instanceof Container container) {
 							if(container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
