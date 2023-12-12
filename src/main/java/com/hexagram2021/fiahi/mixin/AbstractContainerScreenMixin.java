@@ -15,7 +15,7 @@ public class AbstractContainerScreenMixin<T extends AbstractContainerMenu> {
 
 	@SuppressWarnings("unchecked")
 	@Inject(method = "renderSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/ItemRenderer;renderAndDecorateItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V", shift = At.Shift.AFTER))
-	public void renderFoodSpecialTexture(PoseStack transform, Slot slot, CallbackInfo ci) {
+	public void fiahi$renderFoodSpecialTexture(PoseStack transform, Slot slot, CallbackInfo ci) {
 		int blitOffset = ((AbstractContainerScreen<T>)(Object)this).getBlitOffset();
 		FoodItemStackRenderUtil.renderSpecialFood(transform, slot, blitOffset);
 	}
