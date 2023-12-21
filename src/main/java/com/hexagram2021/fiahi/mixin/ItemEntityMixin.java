@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ItemEntityMixin {
 	@SuppressWarnings("deprecation")
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V", shift = At.Shift.AFTER))
-	public void tickFood(CallbackInfo ci) {
+	public void fiahi$tickFood(CallbackInfo ci) {
 		ItemEntity current = (ItemEntity) (Object) this;
 		if(!current.level.isClientSide && ForgeEventHandler.isAvailableToTickFood()) {
 			current.getItem().getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {

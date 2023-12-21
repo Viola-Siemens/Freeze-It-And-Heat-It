@@ -29,7 +29,7 @@ public class InventoryMixin {
 
 	@SuppressWarnings("deprecation")
 	@Inject(method = "tick", at = @At(value = "TAIL"))
-	public void convertFoodIntoLeftoverIfFullyRotten(CallbackInfo ci) {
+	public void fiahi$convertFoodIntoLeftoverIfFullyRotten(CallbackInfo ci) {
 		Level level = this.player.level;
 		for(NonNullList<ItemStack> itemStackList : this.compartments) {
 			for(int i = 0; i < itemStackList.size(); ++i) {

@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
 	@Inject(method = "addEatEffect", at = @At(value = "HEAD"))
-	private void addSpecialEatEffect(ItemStack itemStack, Level level, LivingEntity entity, CallbackInfo ci) {
+	private void fiahi$addSpecialEatEffect(ItemStack itemStack, Level level, LivingEntity entity, CallbackInfo ci) {
 		itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
 			if(c.getFrozenLevel() > 0) {
 				entity.addEffect(new MobEffectInstance(FIAHIMobEffects.SHIVER.get(), c.getFrozenLevel() * 200, c.getFrozenLevel() - 1));

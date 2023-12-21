@@ -17,7 +17,7 @@ plugins {
 }
 apply plugin: 'org.spongepowered.mixin'
 
-version = '2.2.1'
+version = '2.2.2'
 group = 'com.hexagram2021.fiahi'
 archivesBaseName = 'fiahi'
 
@@ -31,7 +31,7 @@ minecraft {
 
     runs {
         client {
-            workingDirectory project.file('run')
+            workingDirectory project.file('run/client')
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'mixin.env.remapRefMap', 'true'
@@ -50,7 +50,7 @@ minecraft {
         }
 
         server {
-            workingDirectory project.file('run')
+            workingDirectory project.file('run/server')
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'mixin.env.remapRefMap', 'true'
@@ -69,7 +69,7 @@ minecraft {
         }
 
         gameTestServer {
-            workingDirectory project.file('run')
+            workingDirectory project.file('run/test_server')
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'mixin.env.remapRefMap', 'true'
@@ -88,7 +88,7 @@ minecraft {
         }
 
         data {
-            workingDirectory project.file('run')
+            workingDirectory project.file('run/data')
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'mixin.env.remapRefMap', 'true'
@@ -132,7 +132,7 @@ dependencies {
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation fg.deobf("curse.maven:cold_sweat-506194:4770582")
+    implementation fg.deobf("curse.maven:cold_sweat-506194:4959629")
 }
 
 jar {
