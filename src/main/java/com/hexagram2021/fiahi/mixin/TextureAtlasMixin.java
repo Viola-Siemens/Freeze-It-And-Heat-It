@@ -18,10 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 @Mixin(TextureAtlas.class)
 public abstract class TextureAtlasMixin {
@@ -61,10 +58,13 @@ public abstract class TextureAtlasMixin {
 		if (spriteInfo.name() instanceof DummyResourceLocation dummyId) {
 			ResourceLocation originTextureLocation = this.getResourceLocation(dummyId.getOrigin());
 
-			try {
-				Resource resource = resourceManager.getResource(originTextureLocation);
+			Optional<Resource> resource = resourceManager.getResource(originTextureLocation);
+			if(resource.isEmpty()) {
+				return;
+			}
 
-				NativeImage nativeImage = NativeImage.read(resource.getInputStream());
+			try {
+				NativeImage nativeImage = NativeImage.read(resource.get().open());
 				switch(dummyId.getColor()) {
 					case COLD_COLOR -> fiahi$remapColdImage(nativeImage, dummyId.getLevel());
 					case HOT_COLOR -> fiahi$remapHotImage(nativeImage, dummyId.getLevel());
