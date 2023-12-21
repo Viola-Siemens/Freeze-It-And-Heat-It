@@ -31,6 +31,10 @@ public class FIAHILogger {
 		logger.log(Level.ERROR, message, params);
 	}
 
+	public static void error(String message, Throwable e) {
+		logger.log(Level.ERROR, message, e);
+	}
+
 	public static void info(String message, Object... params) {
 		logger.log(Level.INFO, message, params);
 	}

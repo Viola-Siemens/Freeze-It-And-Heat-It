@@ -111,17 +111,17 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven { // TOP
+    maven {
         url "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
     }
-    maven { // JEI
+    maven {
         name 'DVS1 Maven FS'
         url 'https://dvs1.progwml6.com/files/maven'
     }
-    maven { //mirror
+    maven {
         name = "ModMaven"
         url = "https://modmaven.dev"
     }
@@ -132,7 +132,9 @@ dependencies {
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation fg.deobf("curse.maven:cold_sweat-506194:4770585")
+    implementation fg.deobf("curse.maven:cold_sweat-506194:4959637")
+    runtimeOnly fg.deobf("curse.maven:jade-324717:4575623")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.1.255")
 }
 
 jar {
@@ -148,6 +150,7 @@ jar {
                 'FMLCorePluginContainsFMLMod': 'true'
         ])
     }
+    from "LICENSE"
 }
 
 jar.finalizedBy('reobfJar')

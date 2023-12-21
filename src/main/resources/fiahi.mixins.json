@@ -16,7 +16,7 @@
   ],
   "minVersion": "0.8",
   "client": [
-    "AbstractContainerScreenMixin",
-    "GuiMixin"
+    "ModelBakeryMixin",
+    "TextureAtlasMixin"
   ]
 }
