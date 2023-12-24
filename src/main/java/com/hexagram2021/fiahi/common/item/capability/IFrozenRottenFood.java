@@ -49,10 +49,10 @@ public interface IFrozenRottenFood {
 		}
 		if(level < newLevel) {
 			if(flag == newFlag || level == 0) {
-				if(flag && newLevel > 0 && item != null &&
+				if(flag && item != null &&
 						FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(getRegistryName(item).toString())) {
 					this.setTemperature(FROZEN_ROTTEN_THRESHOLD * 2 - EPS);
-				} else if(!flag && newLevel < 0 && item != null &&
+				} else if(!flag && item != null &&
 						FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(getRegistryName(item).toString())) {
 					this.setTemperature(-FROZEN_ROTTEN_THRESHOLD * 2 + EPS);
 				}
