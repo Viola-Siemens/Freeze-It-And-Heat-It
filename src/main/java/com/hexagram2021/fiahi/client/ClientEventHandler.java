@@ -1,5 +1,6 @@
 package com.hexagram2021.fiahi.client;
 
+import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.common.item.FoodPouchItem;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
@@ -22,6 +23,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
+import static com.hexagram2021.fiahi.common.util.RegistryHelper.getRegistryName;
 
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientEventHandler {
@@ -29,6 +31,10 @@ public class ClientEventHandler {
 	public static void onToolTipShow(ItemTooltipEvent event) {
 		ItemStack itemStack = event.getItemStack();
 		if(IFrozenRottenFood.canBeFrozenRotten(itemStack)) {
+			String foodId = getRegistryName(itemStack.getItem()).toString();
+			if(FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(foodId) && FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(foodId)) {
+				return;
+			}
 			CompoundTag nbt = itemStack.getTag();
 			int temp = 0;
 			if(nbt != null && nbt.contains(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE, Tag.TAG_ANY_NUMERIC)) {
