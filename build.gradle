@@ -17,7 +17,7 @@ plugins {
 }
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.2.5'
+version = '1.2.6'
 group = 'com.hexagram2021.fiahi'
 archivesBaseName = 'fiahi'
 
@@ -132,9 +132,10 @@ dependencies {
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation fg.deobf("curse.maven:cold_sweat-506194:4959637")
+    implementation fg.deobf("curse.maven:cold_sweat-506194:5015720")
     runtimeOnly fg.deobf("curse.maven:jade-324717:4575623")
     runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.1.255")
+    //runtimeOnly fg.deobf("curse.maven:biomancy-492939:5035331")    //For issue #7
 }
 
 jar {

@@ -29,6 +29,6 @@ With this mod, your food will become frozen or rotten in very low or high temper
 [[dependencies.fiahi]]
     modId="cold_sweat"
     mandatory=true
-    versionRange="[2.2,)"
+    versionRange="[2.2.5,)"
     ordering="NONE"
     side="BOTH"
