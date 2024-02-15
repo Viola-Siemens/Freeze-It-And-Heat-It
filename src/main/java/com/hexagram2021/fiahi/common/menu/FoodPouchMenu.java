@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -248,7 +247,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 	@SuppressWarnings("deprecation")
 	private CompoundTag getContent() {
 		CompoundTag ret = new CompoundTag();
-		if(this.stackedItems.size() > 0) {
+		if(!this.stackedItems.isEmpty()) {
 			ret.putDouble("temperature", this.getTemperature());
 		}
 		ListTag list = new ListTag();
@@ -350,9 +349,9 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 			ItemStack itemStack = new ItemStack(FIAHIItems.FOOD_POUCH);
 			itemStack.setTag(this.getContent());
 			itemStack.setHoverName(this.title);
-			serverPlayer.level.addFreshEntity(new ItemEntity(
-					serverPlayer.getLevel(), serverPlayer.getX(), serverPlayer.getY() + 0.5D, serverPlayer.getZ(), itemStack
-			));
+			if (!serverPlayer.addItem(itemStack)) {
+				serverPlayer.drop(itemStack, false);
+			}
 		}
 	}
 }
