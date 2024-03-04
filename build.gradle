@@ -6,28 +6,37 @@ buildscript {
         maven { name="sponge"; url 'https://repo.spongepowered.org/repository/maven-public/' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '[6.0,6.2)', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 
 plugins {
+    id 'eclipse'
+    id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '5.1.+'
 }
+apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '2.2.4'
+version = '2.2.3'
 group = 'com.hexagram2021.fiahi'
+base {
+    archivesName = 'fiahi'
+}
 archivesBaseName = 'fiahi'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'official', version: '1.19.2'
+    mappings channel: 'official', version: '1.20.1'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    enableIdeaPrepareRuns = true
+    copyIdeResources = true
+    generateRunFolders = true
 
     runs {
         client {
@@ -128,14 +137,13 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.2.0'
+    minecraft 'net.minecraftforge:forge:1.20.1-47.2.0'
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation fg.deobf("curse.maven:cold_sweat-506194:5015714")
-    runtimeOnly fg.deobf("curse.maven:jade-324717:4800904")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.19.2-forge:11.6.0.1019")
-    runtimeOnly fg.deobf("curse.maven:spark-361579:4505309")
+    implementation fg.deobf("curse.maven:cold_sweat-506194:5015701")
+    runtimeOnly fg.deobf("curse.maven:jade-324717:4986594")
+    runtimeOnly fg.deobf("curse.maven:jei-238222:5101366")
 }
 
 jar {

@@ -35,12 +35,6 @@ public class FIAHIClientContent {
 	}
 
 	@SubscribeEvent
-	public static void onTextureAtlasReload(TextureStitchEvent.Pre event) {
-		event.addSprite(FROZEN_TEXTURE);
-		event.addSprite(ROTTEN_TEXTURE);
-	}
-
-	@SubscribeEvent
 	public static void afterTextureAtlasReload(TextureStitchEvent.Post event) {
 		FROZEN_SPRITE = event.getAtlas().getSprite(FROZEN_TEXTURE);
 		ROTTEN_SPRITE = event.getAtlas().getSprite(ROTTEN_TEXTURE);

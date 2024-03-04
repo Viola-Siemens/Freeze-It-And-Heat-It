@@ -18,9 +18,9 @@ public abstract class ItemEntityMixin {
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V", shift = At.Shift.AFTER))
 	public void fiahi$tickFood(CallbackInfo ci) {
 		ItemEntity current = (ItemEntity) (Object) this;
-		if(!current.level.isClientSide && ForgeEventHandler.isAvailableToTickFood()) {
+		if(!current.level().isClientSide && ForgeEventHandler.isAvailableToTickFood()) {
 			current.getItem().getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
-				c.foodTick(c.getTemperature() + 2.0D * Temperature.getTemperatureAt(current.getOnPos(), current.level), current.getItem().getItem());
+				c.foodTick(c.getTemperature() + 2.0D * Temperature.getTemperatureAt(current.getOnPos(), current.level()), current.getItem().getItem());
 				if(c.getTemperature() > 120) {
 					FoodProperties foodProperties = current.getItem().getItem().getFoodProperties();
 					if(foodProperties != null) {

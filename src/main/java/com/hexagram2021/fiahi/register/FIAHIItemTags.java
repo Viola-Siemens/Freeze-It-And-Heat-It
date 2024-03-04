@@ -1,6 +1,6 @@
 package com.hexagram2021.fiahi.register;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -15,6 +15,6 @@ public final class FIAHIItemTags {
 
 	@SuppressWarnings("SameParameterValue")
 	private static TagKey<Item> create(String name) {
-		return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(MODID, name));
+		return TagKey.create(Registries.ITEM, new ResourceLocation(MODID, name));
 	}
 }

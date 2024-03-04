@@ -6,9 +6,4 @@ import net.minecraftforge.network.NetworkEvent;
 public interface IFIAHIPacket {
 	void write(FriendlyByteBuf buf);
 	void handle(NetworkEvent.Context context);
-
-	enum PacketType {
-		REQUEST,
-		RESPONSE
-	}
 }

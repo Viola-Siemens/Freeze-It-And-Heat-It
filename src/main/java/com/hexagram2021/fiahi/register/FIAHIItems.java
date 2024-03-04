@@ -1,6 +1,6 @@
 package com.hexagram2021.fiahi.register;
 
-import com.hexagram2021.fiahi.FreezeItAndHeatIt;
+import com.google.common.collect.Lists;
 import com.hexagram2021.fiahi.common.item.FoodPouchItem;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -10,6 +10,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
@@ -17,10 +18,10 @@ import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
 public class FIAHIItems {
 	private static final DeferredRegister<Item> REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-	public static final ItemEntry<FoodPouchItem> FOOD_POUCH = ItemEntry.register("food_pouch", () -> new FoodPouchItem(new Item.Properties().stacksTo(1).tab(FreezeItAndHeatIt.ITEM_GROUP)));
+	public static final ItemEntry<FoodPouchItem> FOOD_POUCH = ItemEntry.register("food_pouch", () -> new FoodPouchItem(new Item.Properties().stacksTo(1)));
 
-	public static final ItemEntry<Item> LEFTOVER_MEAT = ItemEntry.register("leftover_meat", () -> new Item(new Item.Properties().food(FIAHIFoods.LEFTOVER_MEAT).tab(FreezeItAndHeatIt.ITEM_GROUP)));
-	public static final ItemEntry<Item> LEFTOVER_VEGETABLE = ItemEntry.register("leftover_vegetable", () -> new Item(new Item.Properties().food(FIAHIFoods.LEFTOVER_VEGETABLE).tab(FreezeItAndHeatIt.ITEM_GROUP)));
+	public static final ItemEntry<Item> LEFTOVER_MEAT = ItemEntry.register("leftover_meat", () -> new Item(new Item.Properties().food(FIAHIFoods.LEFTOVER_MEAT)));
+	public static final ItemEntry<Item> LEFTOVER_VEGETABLE = ItemEntry.register("leftover_vegetable", () -> new Item(new Item.Properties().food(FIAHIFoods.LEFTOVER_VEGETABLE)));
 
 	public static void init(IEventBus bus) {
 		REGISTER.register(bus);
@@ -29,8 +30,11 @@ public class FIAHIItems {
 	public static class ItemEntry<T extends Item> implements Supplier<T>, ItemLike {
 		private final RegistryObject<T> regObject;
 
+		public static final List<ItemEntry<? extends Item>> ALL_ITEMS = Lists.newArrayList();
+
 		private ItemEntry(RegistryObject<T> regObject) {
 			this.regObject = regObject;
+			ALL_ITEMS.add(this);
 		}
 
 		public static <T extends Item> ItemEntry<T> register(String name, Supplier<? extends T> make) {

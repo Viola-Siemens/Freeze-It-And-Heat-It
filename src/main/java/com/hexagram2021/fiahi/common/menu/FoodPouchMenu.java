@@ -5,7 +5,6 @@ import com.hexagram2021.fiahi.common.util.RegistryHelper;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
 import com.hexagram2021.fiahi.register.FIAHIMenuTypes;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -19,9 +18,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.*;
+
+import static com.hexagram2021.fiahi.common.util.RegistryHelper.getRegistryName;
 
 public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRottenFood {
 	public static final int INPUT_SLOT = 0;
@@ -244,7 +246,6 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		return index >= 0 && index < this.items.size();
 	}
 
-	@SuppressWarnings("deprecation")
 	private CompoundTag getContent() {
 		CompoundTag ret = new CompoundTag();
 		if(!this.stackedItems.isEmpty()) {
@@ -254,7 +255,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 
 		this.stackedItems.forEach((item, count) -> {
 			CompoundTag tag = new CompoundTag();
-			tag.putString("id", Registry.ITEM.getKey(item).toString());
+			tag.putString("id", Objects.requireNonNull(getRegistryName(item)).toString());
 			tag.putInt("Count", count);
 			list.add(tag);
 		});
@@ -263,7 +264,6 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		return ret;
 	}
 
-	@SuppressWarnings("deprecation")
 	private void setContent(CompoundTag nbt) {
 		if(nbt.contains("temperature", Tag.TAG_ANY_NUMERIC)) {
 			this.setTemperature(nbt.getDouble("temperature"));
@@ -273,7 +273,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 			ListTag list = nbt.getList("Items", Tag.TAG_COMPOUND);
 			for(Tag tag: list) {
 				CompoundTag compoundTag = (CompoundTag)tag;
-				Item item = Registry.ITEM.get(new ResourceLocation(compoundTag.getString("id")));
+				Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(compoundTag.getString("id")));
 				int count = compoundTag.getInt("Count");
 				this.stackedItems.put(item, count);
 			}

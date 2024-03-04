@@ -1,11 +1,9 @@
 package com.hexagram2021.fiahi.client.screen;
 
 import com.hexagram2021.fiahi.common.menu.FoodPouchMenu;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -41,28 +39,25 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 	}
 
 	@Override
-	public void render(PoseStack transform, int x, int y, float deltaFrameTime) {
+	public void render(GuiGraphics transform, int x, int y, float deltaFrameTime) {
 		super.render(transform, x, y, deltaFrameTime);
 		this.renderTooltip(transform, x, y);
 	}
 
 	@Override
-	protected void renderBg(PoseStack transform, float partialTicks, int mouseX, int mouseY) {
+	protected void renderBg(GuiGraphics transform, float partialTicks, int mouseX, int mouseY) {
 		this.renderBackground(transform);
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, BG_LOCATION);
 		int x = this.leftPos;
 		int y = this.topPos;
-		this.blit(transform, x, y, 0, 0, this.imageWidth, this.imageHeight);
+		transform.blit(BG_LOCATION, x, y, 0, 0, this.imageWidth, this.imageHeight);
 		int buttonX = this.leftPos + FOOD_X;
 		int buttonY = this.topPos + FOOD_Y;
 		this.renderButtons(transform, mouseX, mouseY, buttonX, buttonY);
-		this.renderFoods(buttonX, buttonY);
+		this.renderFoods(transform, buttonX, buttonY);
 	}
 
 	@Override
-	protected void renderTooltip(PoseStack transform, int mouseX, int mouseY) {
+	protected void renderTooltip(GuiGraphics transform, int mouseX, int mouseY) {
 		super.renderTooltip(transform, mouseX, mouseY);
 		int buttonX = this.leftPos + FOOD_X;
 		int buttonY = this.topPos + FOOD_Y;
@@ -71,13 +66,13 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 			for (int l = 0; l < this.stackedItems.size(); ++l) {
 				int x = buttonX + l * FOOD_IMAGE_SIZE_WIDTH;
 				if (mouseX >= x && mouseX < x + FOOD_IMAGE_SIZE_WIDTH) {
-					this.renderTooltip(transform, this.stackedItems.get(l), mouseX, mouseY);
+					transform.renderTooltip(this.font, this.stackedItems.get(l), mouseX, mouseY);
 				}
 			}
 		}
 	}
 
-	private void renderButtons(PoseStack transform, int mouseX, int mouseY, int buttonX, int buttonY) {
+	private void renderButtons(GuiGraphics transform, int mouseX, int mouseY, int buttonX, int buttonY) {
 		if(this.stackedItems != null) {
 			for (int i = 0; i < this.stackedItems.size(); ++i) {
 				int x = buttonX + i * FOOD_IMAGE_SIZE_WIDTH;
@@ -88,32 +83,25 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 					y += FOOD_IMAGE_SIZE_HEIGHT * 2;
 				}
 
-				this.blit(transform, x, buttonY, 0, y, FOOD_IMAGE_SIZE_WIDTH, FOOD_IMAGE_SIZE_HEIGHT);
+				transform.blit(BG_LOCATION, x, buttonY, 0, y, FOOD_IMAGE_SIZE_WIDTH, FOOD_IMAGE_SIZE_HEIGHT);
 			}
 		}
 	}
 
-	private void renderFoods(int buttonX, int buttonY) {
+	private void renderFoods(GuiGraphics transform, int buttonX, int buttonY) {
 		if(this.stackedItems != null) {
 			for(int i = 0; i < this.stackedItems.size(); ++i) {
 				int x = buttonX + i * FOOD_IMAGE_SIZE_WIDTH;
-				Objects.requireNonNull(this.minecraft).getItemRenderer().renderAndDecorateItem(this.stackedItems.get(i), x, buttonY);
+				transform.renderItem(this.stackedItems.get(i), x, buttonY);
 			}
 		}
 	}
 
 	@Override
-	public void renderLabels(PoseStack transform, int mouseX, int mouseY) {
+	public void renderLabels(GuiGraphics transform, int mouseX, int mouseY) {
 		super.renderLabels(transform, mouseX, mouseY);
-		this.font.draw(
-				transform, Component.translatable("gui.fiahi.temperature.description", this.menu.getTemperature()),
-				TEMPERATURE_X, TEMPERATURE_Y, 0x404040
-		);
-		this.font.draw(
-				transform,
-				Component.translatable("gui.fiahi.count.description", this.menu.getItemStockCount()),
-				COUNT_X, COUNT_Y, 0x404040
-		);
+		transform.drawString(this.font, Component.translatable("gui.fiahi.temperature.description", this.menu.getTemperature()), TEMPERATURE_X, TEMPERATURE_Y, 0x404040);
+		transform.drawString(this.font, Component.translatable("gui.fiahi.count.description", this.menu.getItemStockCount()), COUNT_X, COUNT_Y, 0x404040);
 	}
 
 	@Override

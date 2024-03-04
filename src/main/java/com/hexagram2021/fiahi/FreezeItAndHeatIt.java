@@ -5,11 +5,8 @@ import com.hexagram2021.fiahi.common.ModVanillaCompat;
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.network.ClientboundFoodPouchPacket;
 import com.hexagram2021.fiahi.common.network.IFIAHIPacket;
-import com.hexagram2021.fiahi.register.FIAHIItems;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
@@ -36,6 +33,7 @@ public class FreezeItAndHeatIt {
 			.simpleChannel();
 
 	public FreezeItAndHeatIt() {
+		System.getProperties().put("production", true);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, FIAHICommonConfig.getConfig());
 
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -55,11 +53,4 @@ public class FreezeItAndHeatIt {
 	private static <T extends IFIAHIPacket> void registerMessage(Class<T> packetType, Function<FriendlyByteBuf, T> constructor) {
 		packetHandler.registerMessage(messageId++, packetType, IFIAHIPacket::write, constructor, (packet, ctx) -> packet.handle(ctx.get()));
 	}
-
-	public static final CreativeModeTab ITEM_GROUP = new CreativeModeTab(MODID) {
-		@Override
-		public ItemStack makeIcon() {
-			return new ItemStack(FIAHIItems.FOOD_POUCH);
-		}
-	};
 }

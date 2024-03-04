@@ -1,88 +1,77 @@
 package com.hexagram2021.fiahi.mixin;
 
-import com.hexagram2021.fiahi.client.util.DummyResourceLocation;
-import com.hexagram2021.fiahi.common.util.FIAHILogger;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.renderer.texture.SpriteLoader;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
+import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.ForgeHooksClient;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
-@Mixin(TextureAtlas.class)
-public abstract class TextureAtlasMixin {
-	@Shadow
-	protected abstract ResourceLocation getResourceLocation(ResourceLocation textureLocation);
+@Mixin(SpriteLoader.class)
+public abstract class SpriteLoaderMixin {
+	@Shadow @Final
+	private ResourceLocation location;
 
 	@Unique
 	private static final int COLD_COLOR = 0xfff0fcff;
 	@Unique
 	private static final int HOT_COLOR = 0xff030800;
 
-	@Inject(method = "getBasicSpriteInfos", at = @At("RETURN"), cancellable = true)
-	public void fiahi$getBasicSpriteInfos(ResourceManager resourceManager, Set<ResourceLocation> set, CallbackInfoReturnable<Collection<TextureAtlasSprite.Info>> cir) {
-		ArrayList<TextureAtlasSprite.Info> extendedInfos = new ArrayList<>(cir.getReturnValue());
+	@SuppressWarnings("deprecation")
+	@ModifyVariable(method = "stitch", at = @At("HEAD"), argsOnly = true, index = 1)
+	public List<SpriteContents> fiahi$modifyStitchContents(List<SpriteContents> contents) {
+		if (this.location.equals(TextureAtlas.LOCATION_BLOCKS)) {
+			ArrayList<SpriteContents> extendedContents = new ArrayList<>(contents);
 
-		cir.getReturnValue().stream()
-				.filter(info -> info != null && (info.name().getPath().contains("item/") || info.name().getPath().contains("items/")))
-				.forEach(info -> {
-					for(int level = 1; level <= 3; ++level) {
-						extendedInfos.add(new TextureAtlasSprite.Info(
-								new DummyResourceLocation(info.name().getNamespace(), info.name().getPath().concat(".frozen.%d".formatted(level)), info.name(), COLD_COLOR, level),
-								info.width(), info.height(), info.metadata
-						));
-						extendedInfos.add(new TextureAtlasSprite.Info(
-								new DummyResourceLocation(info.name().getNamespace(), info.name().getPath().concat(".rotten.%d".formatted(level)), info.name(), HOT_COLOR, level),
-								info.width(), info.height(), info.metadata
-						));
-					}
-				});
+			contents.stream()
+					.filter(content -> content != null && (content.name().getPath().contains("item/") || content.name().getPath().contains("items/")))
+					.forEach(content -> {
+						for (int level = 1; level <= 3; ++level) {
+							NativeImage coldImage = new NativeImage(content.getOriginalImage().format(), content.getOriginalImage().getWidth(), content.getOriginalImage().getHeight(), true);
+							coldImage.copyFrom(content.getOriginalImage());
+							this.fiahi$remapColdImage(coldImage, Pair.of(content.width(), content.height()), level);
+							SpriteContents frozenContent = new SpriteContents(
+									content.name().withSuffix(".frozen.%d".formatted(level)),
+									new FrameSize(content.width(), content.height()),
+									coldImage,
+									AnimationMetadataSection.EMPTY,
+									content.forgeMeta
+							);
+							frozenContent.animatedTexture = content.animatedTexture;
+							extendedContents.add(frozenContent);
 
-		cir.setReturnValue(extendedInfos);
-	}
+							NativeImage hotImage = new NativeImage(content.getOriginalImage().format(), content.getOriginalImage().getWidth(), content.getOriginalImage().getHeight(), true);
+							hotImage.copyFrom(content.getOriginalImage());
+							this.fiahi$remapHotImage(hotImage, Pair.of(content.width(), content.height()), level);
+							SpriteContents rottenContent = new SpriteContents(
+									content.name().withSuffix(".rotten.%d".formatted(level)),
+									new FrameSize(content.width(), content.height()),
+									hotImage,
+									AnimationMetadataSection.EMPTY,
+									content.forgeMeta
+							);
+							rottenContent.animatedTexture = content.animatedTexture;
+							extendedContents.add(rottenContent);
+						}
+					});
 
-	@SuppressWarnings({"DataFlowIssue", "UnstableApiUsage"})
-	@Inject(method = "load(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite$Info;IIIII)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;", at = @At("HEAD"), cancellable = true)
-	public void fiahi$load(ResourceManager resourceManager, TextureAtlasSprite.Info spriteInfo, int width, int height, int mipLevel, int originX, int originY, CallbackInfoReturnable<TextureAtlasSprite> cir) {
-		TextureAtlas current = (TextureAtlas)(Object) this;
-		if (spriteInfo.name() instanceof DummyResourceLocation dummyId) {
-			ResourceLocation originTextureLocation = this.getResourceLocation(dummyId.getOrigin());
-
-			Optional<Resource> resource = resourceManager.getResource(originTextureLocation);
-			if(resource.isEmpty()) {
-				return;
-			}
-
-			try(InputStream inputStream = resource.get().open()) {
-				NativeImage nativeImage = NativeImage.read(inputStream);
-				switch(dummyId.getColor()) {
-					case COLD_COLOR -> fiahi$remapColdImage(nativeImage, spriteInfo.metadata.getFrameSize(spriteInfo.width(), spriteInfo.height()), dummyId.getLevel());
-					case HOT_COLOR -> fiahi$remapHotImage(nativeImage, spriteInfo.metadata.getFrameSize(spriteInfo.width(), spriteInfo.height()), dummyId.getLevel());
-				}
-				TextureAtlasSprite ret = ForgeHooksClient.loadTextureAtlasSprite(current, resourceManager, spriteInfo, resource.get(), width, height, originX, originY, mipLevel, nativeImage);
-				cir.setReturnValue(ret == null ? new TextureAtlasSprite(current, spriteInfo, mipLevel, width, height, originX, originY, nativeImage) : ret);
-			} catch (RuntimeException e) {
-				FIAHILogger.error("Unable to parse metadata from %s".formatted(originTextureLocation), e);
-				cir.setReturnValue(null);
-			} catch (IOException e) {
-				FIAHILogger.error("Using missing texture, unable to load %s".formatted(originTextureLocation), e);
-				cir.setReturnValue(null);
-			}
+			return extendedContents;
 		}
+		return contents;
 	}
 
 	@Unique

@@ -1,9 +1,6 @@
 package com.hexagram2021.fiahi.common;
 
-import com.hexagram2021.fiahi.register.FIAHICapabilities;
-import com.hexagram2021.fiahi.register.FIAHIItems;
-import com.hexagram2021.fiahi.register.FIAHIMenuTypes;
-import com.hexagram2021.fiahi.register.FIAHIMobEffects;
+import com.hexagram2021.fiahi.register.*;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -16,13 +13,10 @@ public final class FIAHIContent {
 	private FIAHIContent() {}
 
 	public static void modConstruct(IEventBus bus) {
+		FIAHICreativeModeTabs.init(bus);
 		FIAHIItems.init(bus);
 		FIAHIMenuTypes.init(bus);
 		FIAHIMobEffects.init(bus);
-	}
-
-	public static void init() {
-
 	}
 
 	@SubscribeEvent
