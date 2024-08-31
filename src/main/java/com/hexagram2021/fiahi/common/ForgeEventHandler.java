@@ -5,6 +5,7 @@ import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
 import com.momosoftworks.coldsweat.api.util.Temperature;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.food.FoodProperties;
@@ -16,6 +17,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;
 
@@ -51,7 +53,9 @@ public final class ForgeEventHandler {
 				LevelChunk levelChunk = chunk.getFullChunk();
 				if(levelChunk != null && !levelChunk.isEmpty()) {
 					levelChunk.getBlockEntities().forEach((blockPos, blockEntity) -> {
-						if (blockEntity.hasLevel() && blockEntity instanceof Container container) {
+						ResourceLocation beId = ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(blockEntity.getType());
+						if (blockEntity.hasLevel() && blockEntity instanceof Container container &&
+								beId != null && !FIAHICommonConfig.STABLE_TEMPERATURE_CONTAINERS.get().contains(beId.toString())) {
 							if(container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
 								return;
 							}

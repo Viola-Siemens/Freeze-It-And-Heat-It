@@ -21,6 +21,8 @@ public final class FIAHICommonConfig {
 	public static final ForgeConfigSpec.DoubleValue FROZEN_SPEED_MULTIPLIER;
 	public static final ForgeConfigSpec.DoubleValue ROTTEN_SPEED_MULTIPLIER;
 
+	public static final ForgeConfigSpec.ConfigValue<List<? extends String>> STABLE_TEMPERATURE_CONTAINERS;
+
 	private FIAHICommonConfig() {}
 
 	static {
@@ -51,6 +53,11 @@ public final class FIAHICommonConfig {
 					.defineInRange("FROZEN_SPEED_MULTIPLIER", 1.0D, 0.01D, 100.0D);
 			ROTTEN_SPEED_MULTIPLIER = BUILDER.comment("How fast will a food item get rotten. The bigger, the faster.")
 					.defineInRange("ROTTEN_SPEED_MULTIPLIER", 0.75D, 0.01D, 100.0D);
+			STABLE_TEMPERATURE_CONTAINERS = BUILDER.comment("A whitelist of containers. Food items in these block entities will never be affected by temperature.")
+					.defineList("STABLE_TEMPERATURE_CONTAINERS", List.of(
+							new ResourceLocation("cold_sweat", "boiler").toString(),
+							new ResourceLocation("cold_sweat", "icebox").toString()
+					), o -> o instanceof String str && ResourceLocation.isValidResourceLocation(str));
 		BUILDER.pop();
 		SPEC = BUILDER.build();
 	}

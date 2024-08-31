@@ -19,7 +19,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '3.1.0'
+version = '3.1.1'
 group = 'com.hexagram2021.fiahi'
 base {
     archivesName = 'fiahi'
@@ -141,7 +141,7 @@ dependencies {
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation fg.deobf("curse.maven:cold_sweat-506194:5015701")
+    implementation fg.deobf("curse.maven:cold_sweat-506194:5663723")
     runtimeOnly fg.deobf("curse.maven:jade-324717:4986594")
     runtimeOnly fg.deobf("curse.maven:jei-238222:5101366")
 }

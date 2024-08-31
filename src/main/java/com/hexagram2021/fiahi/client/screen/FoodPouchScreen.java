@@ -100,8 +100,8 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 	@Override
 	public void renderLabels(GuiGraphics transform, int mouseX, int mouseY) {
 		super.renderLabels(transform, mouseX, mouseY);
-		transform.drawString(this.font, Component.translatable("gui.fiahi.temperature.description", this.menu.getTemperature()), TEMPERATURE_X, TEMPERATURE_Y, 0x404040);
-		transform.drawString(this.font, Component.translatable("gui.fiahi.count.description", this.menu.getItemStockCount()), COUNT_X, COUNT_Y, 0x404040);
+		transform.drawString(this.font, Component.translatable("gui.fiahi.temperature.description", this.menu.getTemperature()), TEMPERATURE_X, TEMPERATURE_Y, 0x404040, false);
+		transform.drawString(this.font, Component.translatable("gui.fiahi.count.description", this.menu.getItemStockCount()), COUNT_X, COUNT_Y, 0x404040, false);
 	}
 
 	@Override
