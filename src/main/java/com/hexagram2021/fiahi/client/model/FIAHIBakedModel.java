@@ -2,19 +2,25 @@ package com.hexagram2021.fiahi.client.model;
 
 import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.ChunkRenderTypeSet;
+import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -95,5 +101,51 @@ public record FIAHIBakedModel(BakedModel original, BakedModel frozen1, BakedMode
 			};
 		}
 		return this.original;
+	}
+
+	//Forge
+	@Override
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData data, @Nullable RenderType renderType) {
+		return this.original.getQuads(state, side, rand, data, renderType);
+	}
+
+	@Override
+	public boolean useAmbientOcclusion(BlockState state) {
+		return this.original.useAmbientOcclusion(state);
+	}
+
+	@Override
+	public boolean useAmbientOcclusion(BlockState state, RenderType renderType) {
+		return this.original.useAmbientOcclusion(state, renderType);
+	}
+
+	@Override
+	public BakedModel applyTransform(ItemTransforms.TransformType cameraTransformType, PoseStack poseStack, boolean applyLeftHandTransform) {
+		return this.original.applyTransform(cameraTransformType, poseStack, applyLeftHandTransform);
+	}
+
+	@Override
+	public ModelData getModelData(BlockAndTintGetter level, BlockPos pos, BlockState state, ModelData modelData) {
+		return this.original.getModelData(level, pos, state, modelData);
+	}
+
+	@Override
+	public TextureAtlasSprite getParticleIcon(ModelData data) {
+		return this.original.getParticleIcon(data);
+	}
+
+	@Override
+	public ChunkRenderTypeSet getRenderTypes(BlockState state, RandomSource rand, ModelData data) {
+		return this.original.getRenderTypes(state, rand, data);
+	}
+
+	@Override
+	public List<RenderType> getRenderTypes(ItemStack itemStack, boolean fabulous) {
+		return this.original.getRenderTypes(itemStack, fabulous);
+	}
+
+	@Override
+	public List<BakedModel> getRenderPasses(ItemStack itemStack, boolean fabulous) {
+		return this.original.getRenderPasses(itemStack, fabulous);
 	}
 }

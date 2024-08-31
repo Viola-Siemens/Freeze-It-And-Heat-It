@@ -4,7 +4,6 @@ import com.hexagram2021.fiahi.common.item.FoodPouchItem;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
-import com.momosoftworks.coldsweat.common.blockentity.BoilerBlockEntity;
 import com.momosoftworks.coldsweat.common.blockentity.IceboxBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -22,13 +21,13 @@ import static com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood.ca
 @Mixin(IceboxBlockEntity.class)
 public class IceBoxBlockEntityMixin {
 	@Inject(method = "tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At(value = "INVOKE", target = "Lcom/momosoftworks/coldsweat/common/blockentity/IceboxBlockEntity;tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", shift = At.Shift.BEFORE), remap = false)
-	private static <T extends BlockEntity> void tickFoods(Level level, BlockPos pos, BlockState state, T te, CallbackInfo ci) {
+	private static <T extends BlockEntity> void fiahi$tickFoods(Level level, BlockPos pos, BlockState state, T te, CallbackInfo ci) {
 		IceboxBlockEntity iceboxTE = (IceboxBlockEntity)te;
 		if (iceboxTE.getFuel() > 0) {
 			if (iceboxTE.ticksExisted % 20 == 0) {
 				boolean hasItemStacks = false;
 
-				for(int itemFuel = 1; itemFuel < IceboxBlockEntity.SLOTS; ++itemFuel) {
+				for(int itemFuel: IceboxBlockEntity.WATERSKIN_SLOTS) {
 					ItemStack itemStack = iceboxTE.getItem(itemFuel);
 					if (canBeFrozenRotten(itemStack)) {
 						hasItemStacks = true;
@@ -47,7 +46,7 @@ public class IceBoxBlockEntityMixin {
 			} else if(iceboxTE.ticksExisted % 4 == 1) {
 				boolean hasItemStacks = false;
 
-				for(int itemFuel = 1; itemFuel < BoilerBlockEntity.SLOTS; ++itemFuel) {
+				for(int itemFuel: IceboxBlockEntity.WATERSKIN_SLOTS) {
 					ItemStack itemStack = iceboxTE.getItem(itemFuel);
 					if(itemStack.getItem() == FIAHIItems.FOOD_POUCH.get()) {
 						CompoundTag nbt = itemStack.getOrCreateTag();

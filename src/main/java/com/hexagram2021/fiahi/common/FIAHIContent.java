@@ -21,10 +21,6 @@ public final class FIAHIContent {
 		FIAHIMobEffects.init(bus);
 	}
 
-	public static void init() {
-
-	}
-
 	@SubscribeEvent
 	public static void onRegisterCapability(RegisterCapabilitiesEvent event) {
 		FIAHICapabilities.register(event);

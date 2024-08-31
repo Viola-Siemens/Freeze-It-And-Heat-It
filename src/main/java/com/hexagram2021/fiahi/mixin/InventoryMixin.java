@@ -36,7 +36,7 @@ public class InventoryMixin {
 				if (!itemStackList.get(i).isEmpty()) {
 					ItemStack food = itemStackList.get(i);
 					if(!level.isClientSide && ForgeEventHandler.isAvailableToTickFood()) {
-						double temp = Temperature.get(this.player, Temperature.Type.CORE);
+						double temp = Temperature.get(this.player, Temperature.Trait.CORE);
 						int finalI = i;
 						food.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
 							c.foodTick((temp + 2.0D * c.getTemperature()) / 3.0D, food.getItem());

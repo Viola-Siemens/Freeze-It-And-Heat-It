@@ -21,13 +21,13 @@ import static com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood.ca
 @Mixin(BoilerBlockEntity.class)
 public class BoilerBlockEntityMixin {
 	@Inject(method = "tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At(value = "INVOKE", target = "Lcom/momosoftworks/coldsweat/common/blockentity/BoilerBlockEntity;tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", shift = At.Shift.BEFORE), remap = false)
-	private static <T extends BlockEntity> void tickFoods(Level level, BlockPos pos, BlockState state, T te, CallbackInfo ci) {
+	private static <T extends BlockEntity> void fiahi$tickFoods(Level level, BlockPos pos, BlockState state, T te, CallbackInfo ci) {
 		BoilerBlockEntity boilerTE = (BoilerBlockEntity)te;
 		if (boilerTE.getFuel() > 0) {
 			if (boilerTE.ticksExisted % 20 == 0) {
 				boolean hasItemStacks = false;
 
-				for(int itemFuel = 1; itemFuel < BoilerBlockEntity.SLOTS; ++itemFuel) {
+				for(int itemFuel: BoilerBlockEntity.WATERSKIN_SLOTS) {
 					ItemStack itemStack = boilerTE.getItem(itemFuel);
 					if (canBeFrozenRotten(itemStack)) {
 						hasItemStacks = true;
@@ -46,7 +46,7 @@ public class BoilerBlockEntityMixin {
 			} else if(boilerTE.ticksExisted % 4 == 1) {
 				boolean hasItemStacks = false;
 
-				for(int itemFuel = 1; itemFuel < BoilerBlockEntity.SLOTS; ++itemFuel) {
+				for(int itemFuel: BoilerBlockEntity.WATERSKIN_SLOTS) {
 					ItemStack itemStack = boilerTE.getItem(itemFuel);
 					if(itemStack.getItem() == FIAHIItems.FOOD_POUCH.get()) {
 						CompoundTag nbt = itemStack.getOrCreateTag();

@@ -10,11 +10,10 @@ import static com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood.ca
 
 @Mixin(targets = "com/momosoftworks/coldsweat/common/container/BoilerContainer$2")
 public class BoilerContainerSlotMixin {
-	@Inject(method = "mayPlace", at = @At(value = "HEAD"), cancellable = true)
-	public void mayFoodPlace(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-		if(canBeFrozenRotten(stack)) {
-			cir.setReturnValue(true);
-			cir.cancel();
+	@Inject(method = "mayPlace", at = @At(value = "RETURN"), cancellable = true)
+	private void fiahi$quickMoveFood(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+		if(!cir.getReturnValue()) {
+			cir.setReturnValue(canBeFrozenRotten(stack));
 		}
 	}
 }
