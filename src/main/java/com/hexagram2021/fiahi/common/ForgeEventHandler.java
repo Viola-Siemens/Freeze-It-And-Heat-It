@@ -4,7 +4,7 @@ import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
-import com.momosoftworks.coldsweat.api.util.Temperature;
+import com.momosoftworks.coldsweat.util.world.WorldHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -59,7 +59,7 @@ public final class ForgeEventHandler {
 							if(container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
 								return;
 							}
-							double temp = Temperature.getTemperatureAt(blockPos, Objects.requireNonNull(blockEntity.getLevel()));
+							double temp = WorldHelper.getTemperatureAt(Objects.requireNonNull(blockEntity.getLevel()), blockPos);
 							for (int i = 0; i < container.getContainerSize(); ++i) {
 								ItemStack food = container.getItem(i);
 								int finalI = i;
