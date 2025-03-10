@@ -1,6 +1,7 @@
 package com.hexagram2021.fiahi.common.util;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
@@ -25,5 +26,8 @@ public interface RegistryHelper {
 	}
 	static ResourceLocation getRegistryName(EntityType<?> entityType) {
 		return Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getKey(entityType));
+	}
+	static ResourceLocation getRegistryName(MobEffect effect) {
+		return Objects.requireNonNull(ForgeRegistries.MOB_EFFECTS.getKey(effect));
 	}
 }

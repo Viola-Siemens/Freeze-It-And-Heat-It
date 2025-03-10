@@ -1,6 +1,8 @@
 package com.hexagram2021.fiahi.common.menu;
 
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
+import com.hexagram2021.fiahi.common.item.data.IPouchedFoodData;
+import com.hexagram2021.fiahi.common.item.data.PouchedFoodKey;
 import com.hexagram2021.fiahi.common.util.RegistryHelper;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
@@ -64,9 +66,9 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 
 	final ContainerData data = new SimpleContainerData(2);	//temperature, selectedIndex
 
-	final Map<Item, Integer> stackedItems = new IdentityHashMap<>();
+	final Map<PouchedFoodKey, Integer> stackedItems = new HashMap<>();
 
-	List<Item> items = new ArrayList<>();
+	List<PouchedFoodKey> items = new ArrayList<>();
 
 	@Nullable
 	private final Component title;
@@ -88,10 +90,11 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 			public void setChanged() {
 				ItemStack itemStack = this.getItem();
 				if(itemStack.getCount() > 0) {
-					if(FoodPouchMenu.this.stackedItems.containsKey(itemStack.getItem()) || FoodPouchMenu.this.stackedItems.size() < MAX_FOOD_TYPES) {
+					PouchedFoodKey key = getKeyFromItem(itemStack);
+					if(FoodPouchMenu.this.stackedItems.containsKey(key) || FoodPouchMenu.this.stackedItems.size() < MAX_FOOD_TYPES) {
 						itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
 							int totalCount = FoodPouchMenu.this.stackedItems.values().stream().reduce(0, Integer::sum);
-							FoodPouchMenu.this.stackedItems.compute(itemStack.getItem(), (item, count) -> {
+							FoodPouchMenu.this.stackedItems.compute(key, (item, count) -> {
 								if(count == null) {
 									int newCount = itemStack.getCount();
 									FoodPouchMenu.this.apply(
@@ -129,7 +132,8 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 
 			@Override
 			public void onTake(Player player, ItemStack itemStack) {
-				FoodPouchMenu.this.stackedItems.computeIfPresent(itemStack.getItem(), (item, count) -> {
+				PouchedFoodKey key = getKeyFromItem(itemStack);
+				FoodPouchMenu.this.stackedItems.computeIfPresent(key, (item, count) -> {
 					int ret = count - itemStack.getCount();
 					if(ret > 0) {
 						return ret;
@@ -222,21 +226,24 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		if(index < 0 || index >= this.items.size()) {
 			return;
 		}
-		Item item = this.items.get(this.getSelectedIndex());
-		int count = this.stackedItems.get(item);
+		PouchedFoodKey key = this.items.get(this.getSelectedIndex());
+		int count = this.stackedItems.get(key);
 		if(count <= 0) {
 			return;
 		}
 		ItemStack itemStack;
-		if(count >= item.getMaxStackSize()) {
-			itemStack = new ItemStack(item, item.getMaxStackSize());
+		if(count >= key.item().getMaxStackSize()) {
+			itemStack = new ItemStack(key.item(), key.item().getMaxStackSize());
 		} else {
-			itemStack = new ItemStack(item, count);
+			itemStack = new ItemStack(key.item(), count);
 		}
 		itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
 			c.setTemperature(this.getTemperature());
 			c.updateFoodTag();
 		});
+		for(IPouchedFoodData data: key.datas()) {
+			data.modifyStack(itemStack);
+		}
 		this.resultSlot.set(itemStack);
 
 		this.broadcastChanges();
@@ -253,10 +260,11 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		}
 		ListTag list = new ListTag();
 
-		this.stackedItems.forEach((item, count) -> {
+		this.stackedItems.forEach((key, count) -> {
 			CompoundTag tag = new CompoundTag();
-			tag.putString("id", Objects.requireNonNull(getRegistryName(item)).toString());
+			tag.putString("id", Objects.requireNonNull(getRegistryName(key.item())).toString());
 			tag.putInt("Count", count);
+			tag.put("nbt", key.extra());
 			list.add(tag);
 		});
 		ret.put("Items", list);
@@ -275,7 +283,8 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 				CompoundTag compoundTag = (CompoundTag)tag;
 				Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(compoundTag.getString("id")));
 				int count = compoundTag.getInt("Count");
-				this.stackedItems.put(item, count);
+				IPouchedFoodData[] datas = compoundTag.contains("nbt", Tag.TAG_LIST) ? PouchedFoodKey.readExtraNBT(compoundTag.getList("nbt", Tag.TAG_COMPOUND)) : PouchedFoodKey.EMPTY.datas();
+				this.stackedItems.put(new PouchedFoodKey(Objects.requireNonNull(item), datas), count);
 			}
 		}
 		this.maintainItems();
@@ -286,10 +295,10 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 	}
 
 	private void maintainItems() {
-		this.items = this.stackedItems.keySet().stream().sorted(Comparator.comparing(RegistryHelper::getRegistryName)).toList();
+		this.items = this.stackedItems.keySet().stream().sorted(Comparator.comparing(key -> RegistryHelper.getRegistryName(key.item()))).toList();
 	}
 
-	public void setStackedItems(Map<Item, Integer> stackedItems) {
+	public void setStackedItems(Map<PouchedFoodKey, Integer> stackedItems) {
 		this.stackedItems.clear();
 		this.stackedItems.putAll(stackedItems);
 		this.maintainItems();
@@ -326,11 +335,11 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		this.data.set(1, index);
 	}
 
-	public List<Item> getStackedItems() {
+	public List<PouchedFoodKey> getStackedItems() {
 		return this.items;
 	}
 
-	public Map<Item, Integer> getItemsAndCounts() {
+	public Map<PouchedFoodKey, Integer> getItemsAndCounts() {
 		return this.stackedItems;
 	}
 
@@ -353,5 +362,9 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 				serverPlayer.drop(itemStack, false);
 			}
 		}
+	}
+
+	public static PouchedFoodKey getKeyFromItem(ItemStack itemStack) {
+		return new PouchedFoodKey(itemStack.getItem(), IPouchedFoodData.tryLoad(itemStack.getTag()));
 	}
 }

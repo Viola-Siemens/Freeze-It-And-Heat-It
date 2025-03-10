@@ -115,7 +115,7 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 				if (deltaX >= 0.0D && deltaY >= 0.0D && deltaX < FOOD_IMAGE_SIZE_WIDTH && deltaY < FOOD_IMAGE_SIZE_HEIGHT &&
 						this.menu.clickMenuButton(Objects.requireNonNull(Objects.requireNonNull(this.minecraft).player), i)) {
 					Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
-					Objects.requireNonNull(this.minecraft.gameMode).handleInventoryButtonClick((this.menu).containerId, i);
+					Objects.requireNonNull(this.minecraft.gameMode).handleInventoryButtonClick(this.menu.containerId, i);
 					return true;
 				}
 			}
@@ -124,6 +124,6 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 	}
 
 	public void containerChanged() {
-		this.stackedItems = this.menu.getStackedItems().stream().map(ItemStack::new).collect(Collectors.toList());
+		this.stackedItems = this.menu.getStackedItems().stream().map(key -> new ItemStack(key.item())).collect(Collectors.toList());
 	}
 }

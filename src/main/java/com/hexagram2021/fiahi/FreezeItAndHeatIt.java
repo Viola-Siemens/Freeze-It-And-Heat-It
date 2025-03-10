@@ -3,11 +3,13 @@ package com.hexagram2021.fiahi;
 import com.hexagram2021.fiahi.common.FIAHIContent;
 import com.hexagram2021.fiahi.common.ModVanillaCompat;
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
+import com.hexagram2021.fiahi.common.item.data.PouchedFoodDataTypes;
 import com.hexagram2021.fiahi.common.network.ClientboundFoodPouchPacket;
 import com.hexagram2021.fiahi.common.network.IFIAHIPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -40,12 +42,16 @@ public class FreezeItAndHeatIt {
 		FIAHIContent.modConstruct(bus);
 
 		bus.addListener(this::setup);
+		bus.addListener(EventPriority.LOWEST, this::loadRegistry);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	private void setup(final FMLCommonSetupEvent event) {
 		event.enqueueWork(ModVanillaCompat::setup);
 		registerMessage(ClientboundFoodPouchPacket.class, ClientboundFoodPouchPacket::new);
+	}
+	private void loadRegistry(final FMLCommonSetupEvent event) {
+		event.enqueueWork(PouchedFoodDataTypes::init);
 	}
 
 	private static int messageId = 0;
