@@ -17,7 +17,7 @@ plugins {
 }
 apply plugin: 'org.spongepowered.mixin'
 
-version = '2.2.5'
+version = '2.2.6'
 group = 'com.hexagram2021.fiahi'
 archivesBaseName = 'fiahi'
 
@@ -111,31 +111,32 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven { // TOP
+    maven {
         url "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
     }
-    maven { // JEI
+    maven {
         name 'DVS1 Maven FS'
         url 'https://dvs1.progwml6.com/files/maven'
     }
-    maven { //mirror
+    maven {
         name = "ModMaven"
         url = "https://modmaven.dev"
     }
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.2.0'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.4.0'
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation fg.deobf("curse.maven:cold_sweat-506194:5663726")
+    implementation fg.deobf("curse.maven:cold_sweat-506194:6176797")
     runtimeOnly fg.deobf("curse.maven:jade-324717:4800904")
     runtimeOnly fg.deobf("mezz.jei:jei-1.19.2-forge:11.6.0.1019")
     runtimeOnly fg.deobf("curse.maven:spark-361579:4505309")
+    runtimeOnly fg.deobf("curse.maven:add_potion-739891:4874518")
 }
 
 jar {
@@ -151,6 +152,7 @@ jar {
                 'FMLCorePluginContainsFMLMod': 'true'
         ])
     }
+    from "LICENSE"
 }
 
 jar.finalizedBy('reobfJar')

@@ -3,7 +3,7 @@ package com.hexagram2021.fiahi.mixin;
 import com.hexagram2021.fiahi.common.ForgeEventHandler;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
-import com.momosoftworks.coldsweat.api.util.Temperature;
+import com.momosoftworks.coldsweat.util.world.WorldHelper;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +20,7 @@ public abstract class ItemEntityMixin {
 		ItemEntity current = (ItemEntity) (Object) this;
 		if(!current.level.isClientSide && ForgeEventHandler.isAvailableToTickFood()) {
 			current.getItem().getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
-				c.foodTick(c.getTemperature() + 2.0D * Temperature.getTemperatureAt(current.getOnPos(), current.level), current.getItem().getItem());
+				c.foodTick(c.getTemperature() + 2.0D * WorldHelper.getTemperatureAt(current.level, current.getOnPos()), current.getItem().getItem());
 				if(c.getTemperature() > 120) {
 					FoodProperties foodProperties = current.getItem().getItem().getFoodProperties();
 					if(foodProperties != null) {
