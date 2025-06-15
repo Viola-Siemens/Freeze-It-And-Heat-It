@@ -1,11 +1,14 @@
 package com.hexagram2021.fiahi.client;
 
+import com.hexagram2021.fiahi.client.particle.BreatheOutParticle;
 import com.hexagram2021.fiahi.client.screen.FoodPouchScreen;
 import com.hexagram2021.fiahi.register.FIAHIMenuTypes;
+import com.hexagram2021.fiahi.register.FIAHIParticleTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -38,5 +41,10 @@ public class FIAHIClientContent {
 	public static void afterTextureAtlasReload(TextureStitchEvent.Post event) {
 		FROZEN_SPRITE = event.getAtlas().getSprite(FROZEN_TEXTURE);
 		ROTTEN_SPRITE = event.getAtlas().getSprite(ROTTEN_TEXTURE);
+	}
+
+	@SubscribeEvent
+	public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+		event.registerSpriteSet(FIAHIParticleTypes.BREATHE_OUT.get(), BreatheOutParticle.Provider::new);
 	}
 }

@@ -17,6 +17,7 @@ public final class FIAHIContent {
 		FIAHIItems.init(bus);
 		FIAHIMenuTypes.init(bus);
 		FIAHIMobEffects.init(bus);
+		FIAHIParticleTypes.init(bus);
 	}
 
 	@SubscribeEvent
