@@ -1,9 +1,11 @@
 package com.hexagram2021.fiahi.client;
 
+import com.hexagram2021.fiahi.client.particle.BreatheOutParticle;
 import com.hexagram2021.fiahi.client.screen.FoodPouchScreen;
 import com.hexagram2021.fiahi.client.util.ModelBakeryUtils;
 import com.hexagram2021.fiahi.common.util.FIAHILogger;
 import com.hexagram2021.fiahi.register.FIAHIMenuTypes;
+import com.hexagram2021.fiahi.register.FIAHIParticleTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.AtlasSet;
@@ -15,6 +17,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -105,5 +108,10 @@ public class FIAHIClientContent {
 				}
 			}
 		}));
+	}
+
+	@SubscribeEvent
+	public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+		event.register(FIAHIParticleTypes.BREATHE_OUT.get(), BreatheOutParticle.Provider::new);
 	}
 }
