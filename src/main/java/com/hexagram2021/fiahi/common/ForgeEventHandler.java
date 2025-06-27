@@ -50,7 +50,7 @@ public final class ForgeEventHandler {
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		Player player = event.player;
 		Level level = player.level;
-		if(level.isClientSide && event.phase == TickEvent.Phase.END && player.tickCount % 75 == 0) {
+		if(level.isClientSide && !player.isSpectator() && event.phase == TickEvent.Phase.END && player.tickCount % 75 == 0) {
 			ScreenManager.makePlayerBreatheParticle(player);
 		}
 	}
