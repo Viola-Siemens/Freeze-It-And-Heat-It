@@ -13,6 +13,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.ConcurrentModificationException;
 import java.util.Objects;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
@@ -48,7 +50,7 @@ public final class ForgeEventHandler {
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		Player player = event.player;
 		Level level = player.level;
-		if(level.isClientSide && event.phase == TickEvent.Phase.END && player.tickCount % 75 == 0) {
+		if(level.isClientSide && !player.isSpectator() && event.phase == TickEvent.Phase.END && player.tickCount % 75 == 0) {
 			ScreenManager.makePlayerBreatheParticle(player);
 		}
 	}
@@ -66,22 +68,27 @@ public final class ForgeEventHandler {
 			serverLevel.getChunkSource().chunkMap.getChunks().forEach(chunk -> {
 				LevelChunk levelChunk = chunk.getFullChunk();
 				if(levelChunk != null && !levelChunk.isEmpty()) {
-					levelChunk.getBlockEntities().forEach((blockPos, blockEntity) -> {
-						ResourceLocation beId = ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(blockEntity.getType());
-						if (blockEntity.hasLevel() && blockEntity instanceof Container container &&
-								beId != null && !FIAHICommonConfig.STABLE_TEMPERATURE_CONTAINERS.get().contains(beId.toString())) {
-							if(container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
-								return;
-							}
-							tickContainer(blockEntity, container, blockPos, container.getContainerSize(), Container::getItem, Container::setItem);
-						} else {
-							blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(itemHandler -> {
-								if(itemHandler instanceof IItemHandlerModifiable itemHandlerModifiable) {
-									tickContainer(blockEntity, itemHandlerModifiable, blockPos, itemHandlerModifiable.getSlots(), IItemHandlerModifiable::getStackInSlot, IItemHandlerModifiable::setStackInSlot);
+					try {
+						levelChunk.getBlockEntities().forEach((blockPos, blockEntity) -> {
+							ResourceLocation beId = ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(blockEntity.getType());
+							if (blockEntity.hasLevel() && blockEntity instanceof Container container &&
+									beId != null && !FIAHICommonConfig.STABLE_TEMPERATURE_CONTAINERS.get().contains(beId.toString())) {
+								if(container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
+									return;
 								}
-							});
-						}
-					});
+								tickContainer(blockEntity, container, blockPos, container.getContainerSize(), Container::getItem, Container::setItem);
+							} else {
+								blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(itemHandler -> {
+									if(itemHandler instanceof IItemHandlerModifiable itemHandlerModifiable) {
+										tickContainer(blockEntity, itemHandlerModifiable, blockPos, itemHandlerModifiable.getSlots(), IItemHandlerModifiable::getStackInSlot, IItemHandlerModifiable::setStackInSlot);
+									}
+								});
+							}
+						});
+					} catch (ConcurrentModificationException cme) {
+						ChunkPos pos = chunk.getPos();
+						throw new RuntimeException("Block entities of chunk (%d, %d) has been concurrently modified during iterating. This is NOT a bug of FIAHI. See https://github.com/Viola-Siemens/Freeze-It-And-Heat-It/issues/25 to get more information.".formatted(pos.x, pos.z), cme);
+					}
 				}
 			});
 		}
