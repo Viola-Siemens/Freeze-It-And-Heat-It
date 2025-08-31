@@ -2,11 +2,12 @@ package com.hexagram2021.fiahi.mixin.cold_sweat;
 
 import com.hexagram2021.fiahi.common.item.FoodPouchItem;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
+import com.hexagram2021.fiahi.common.item.capability.impl.FoodPouchData;
+import com.hexagram2021.fiahi.register.FIAHIAttachmentTypes;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
 import com.momosoftworks.coldsweat.common.blockentity.BoilerBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -31,12 +32,13 @@ public class BoilerBlockEntityMixin {
 					ItemStack itemStack = boilerTE.getItem(itemFuel);
 					if (canBeFrozenRotten(itemStack)) {
 						hasItemStacks = true;
-						itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY).ifPresent(c -> {
+						IFrozenRottenFood c = itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY);
+						if(c != null) {
 							if(c.getTemperature() < IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD) {
 								c.setTemperature(c.getTemperature() + 1.0D);
 								c.updateFoodTag();
 							}
-						});
+						}
 					}
 				}
 
@@ -49,13 +51,15 @@ public class BoilerBlockEntityMixin {
 				for(int itemFuel: BoilerBlockEntity.WATERSKIN_SLOTS) {
 					ItemStack itemStack = boilerTE.getItem(itemFuel);
 					if(itemStack.getItem() == FIAHIItems.FOOD_POUCH.get()) {
-						CompoundTag nbt = itemStack.getOrCreateTag();
-						double itemTemp = nbt.getDouble("temperature");
-						int itemCount = FoodPouchItem.getItemCount(nbt);
-						if(itemCount > 0 && itemTemp < IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD && boilerTE.ticksExisted % (4 * itemCount) == 1) {
+						FoodPouchData foodPouchData = itemStack.get(FIAHIAttachmentTypes.FOOD_POUCH_DATA);
+						if(foodPouchData == null) {
+							foodPouchData = FoodPouchData.EMPTY;
+						}
+						double itemTemp = foodPouchData.temperature();
+						int itemCount = FoodPouchItem.getItemCount(foodPouchData);
+						if(itemCount > 0 && itemTemp > -IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD && boilerTE.ticksExisted % (4 * itemCount) == 1) {
 							hasItemStacks = true;
-							nbt.putDouble("temperature", itemTemp + 0.2D);
-							itemStack.setTag(nbt);
+							itemStack.set(FIAHIAttachmentTypes.FOOD_POUCH_DATA, new FoodPouchData(itemTemp + 0.2D, foodPouchData.items()));
 						}
 					}
 				}

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
 
 public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
-	private static final ResourceLocation BG_LOCATION = new ResourceLocation(MODID, "textures/gui/container/food_pouch.png");
+	private static final ResourceLocation BG_LOCATION = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/container/food_pouch.png");
 	private static final int FOOD_IMAGE_SIZE_WIDTH = 16;
 	private static final int FOOD_IMAGE_SIZE_HEIGHT = 18;
 	private static final int FOOD_X = 46;
@@ -46,7 +46,7 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 
 	@Override
 	protected void renderBg(GuiGraphics transform, float partialTicks, int mouseX, int mouseY) {
-		this.renderBackground(transform);
+		this.renderBackground(transform, mouseX, mouseY, partialTicks);
 		int x = this.leftPos;
 		int y = this.topPos;
 		transform.blit(BG_LOCATION, x, y, 0, 0, this.imageWidth, this.imageHeight);

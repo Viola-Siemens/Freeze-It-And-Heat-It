@@ -1,7 +1,7 @@
 package com.hexagram2021.fiahi.client.model;
 
-import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
+import com.hexagram2021.fiahi.register.FIAHIAttachmentTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
@@ -12,16 +12,15 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.ChunkRenderTypeSet;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.ChunkRenderTypeSet;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.common.util.TriState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -71,18 +70,18 @@ public record FIAHIBakedModel(BakedModel original, BakedModel frozen1, BakedMode
 
 	@Override
 	public ItemTransforms getTransforms() {
-		return FIAHIBakedModel.this.original.getTransforms();
+		return this.original.getTransforms();
 	}
 
 	private BakedModel getTemperatureEffectBakedModel(ItemStack itemStack) {
 		if(!IFrozenRottenFood.canBeFrozenRotten(itemStack)) {
 			return this.original;
 		}
-		CompoundTag nbt = itemStack.getTag();
-		if(nbt == null || !nbt.contains(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE, Tag.TAG_ANY_NUMERIC)) {
+		Integer temperatureInteger = itemStack.get(FIAHIAttachmentTypes.FOOD_TEMPERATURE);
+		if(temperatureInteger == null) {
 			return this.original;
 		}
-		int temp = (int)nbt.getDouble(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE);
+		int temp = temperatureInteger;
 		int frozenLevel = IFrozenRottenFood.getFrozenLevel(temp);
 		int rottenLevel = IFrozenRottenFood.getRottenLevel(temp);
 		if(frozenLevel > 0) {
@@ -111,18 +110,21 @@ public record FIAHIBakedModel(BakedModel original, BakedModel frozen1, BakedMode
 	}
 
 	@Override
-	public boolean useAmbientOcclusion(BlockState state) {
-		return this.original.useAmbientOcclusion(state);
-	}
-
-	@Override
-	public boolean useAmbientOcclusion(BlockState state, RenderType renderType) {
-		return this.original.useAmbientOcclusion(state, renderType);
+	public TriState useAmbientOcclusion(BlockState state, ModelData data, RenderType renderType) {
+		return this.original.useAmbientOcclusion(state, data, renderType);
 	}
 
 	@Override
 	public BakedModel applyTransform(ItemDisplayContext transformType, PoseStack poseStack, boolean applyLeftHandTransform) {
-		return this.original.applyTransform(transformType, poseStack, applyLeftHandTransform);
+		return new FIAHIBakedModel(
+				this.original.applyTransform(transformType, poseStack, applyLeftHandTransform),
+				this.frozen1.applyTransform(transformType, poseStack, applyLeftHandTransform),
+				this.frozen2.applyTransform(transformType, poseStack, applyLeftHandTransform),
+				this.frozen3.applyTransform(transformType, poseStack, applyLeftHandTransform),
+				this.rotten1.applyTransform(transformType, poseStack, applyLeftHandTransform),
+				this.rotten2.applyTransform(transformType, poseStack, applyLeftHandTransform),
+				this.rotten3.applyTransform(transformType, poseStack, applyLeftHandTransform)
+		);
 	}
 
 	@Override

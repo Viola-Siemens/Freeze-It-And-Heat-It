@@ -1,42 +1,35 @@
 package com.hexagram2021.fiahi.common.item.data;
 
-import com.hexagram2021.fiahi.common.item.data.impl.AddPotionEffectsData;
 import com.hexagram2021.fiahi.common.item.data.impl.SuspiciousStewEffectsData;
 import com.hexagram2021.fiahi.common.util.FIAHILogger;
-import com.mojang.serialization.Codec;
-import net.minecraft.nbt.CompoundTag;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
-
-import javax.annotation.Nullable;
+import net.minecraft.world.item.component.SuspiciousStewEffects;
 
 public final class PouchedFoodDataTypes {
-	public static IPouchedFoodDataType SUSPICIOUS_STEW_EFFECTS = register(PouchedFoodDataNames.SUSPICIOUS_STEW_EFFECTS, new IPouchedFoodDataType() {
-		@Override @Nullable
-		public SuspiciousStewEffectsData fromStackNBT(CompoundTag nbt) {
-			return SuspiciousStewEffectsData.fromStackNBT(nbt);
+	public static IPouchedFoodDataType<SuspiciousStewEffects> SUSPICIOUS_STEW_EFFECTS = register(PouchedFoodDataNames.SUSPICIOUS_STEW_EFFECTS, new IPouchedFoodDataType<>() {
+		@Override
+		public DataComponentType<SuspiciousStewEffects> getDataComponentType() {
+			return DataComponents.SUSPICIOUS_STEW_EFFECTS;
 		}
 
 		@Override
-		public Codec<SuspiciousStewEffectsData> codec() {
+		public MapCodec<SuspiciousStewEffectsData> codec() {
 			return SuspiciousStewEffectsData.CODEC;
 		}
-	});
-	public static IPouchedFoodDataType ADD_POTION_EFFECTS = register(PouchedFoodDataNames.ADD_POTION_EFFECTS, new IPouchedFoodDataType() {
-		@Override @Nullable
-		public AddPotionEffectsData fromStackNBT(CompoundTag nbt) {
-			return AddPotionEffectsData.fromStackNBT(nbt);
-		}
 
 		@Override
-		public Codec<AddPotionEffectsData> codec() {
-			return AddPotionEffectsData.CODEC;
+		public IPouchedFoodData<SuspiciousStewEffects> create(SuspiciousStewEffects object) {
+			return new SuspiciousStewEffectsData(object);
 		}
 	});
 
 	private PouchedFoodDataTypes() {
 	}
 
-	public static IPouchedFoodDataType register(ResourceLocation id, IPouchedFoodDataType type) {
+	public static <T> IPouchedFoodDataType<T> register(ResourceLocation id, IPouchedFoodDataType<T> type) {
 		IPouchedFoodDataType.register(id, type);
 		return type;
 	}

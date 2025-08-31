@@ -1,6 +1,6 @@
 package com.hexagram2021.fiahi.client;
 
-import com.hexagram2021.fiahi.common.item.data.PouchedFoodKey;
+import com.hexagram2021.fiahi.common.item.capability.impl.FoodPouchData;
 import com.hexagram2021.fiahi.common.menu.FoodPouchMenu;
 import com.hexagram2021.fiahi.common.util.FIAHILogger;
 import com.hexagram2021.fiahi.register.FIAHIParticleTypes;
@@ -12,20 +12,18 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
-import java.util.Map;
-
 public class ScreenManager {
 	private static int retry = 5;
 
 	@SuppressWarnings("BusyWait")
-	public static void openFoodPouchScreen(Map<PouchedFoodKey, Integer> stackedItems, int containerId) {
+	public static void openFoodPouchScreen(FoodPouchData foodPouchData, int containerId) {
 		LocalPlayer player = Minecraft.getInstance().player;
 		if(player != null) {
 			retry = 5;
 			new Thread(() -> {
 				while(retry != 0) {
 					retry -= 1;
-					if(!tryOpenFoodPouchScreen(player, stackedItems, containerId)) {
+					if(!tryOpenFoodPouchScreen(player, foodPouchData, containerId)) {
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException e) {
@@ -37,10 +35,10 @@ public class ScreenManager {
 		}
 	}
 
-	private static boolean tryOpenFoodPouchScreen(LocalPlayer player, Map<PouchedFoodKey, Integer> stackedItems, int containerId) {
+	private static boolean tryOpenFoodPouchScreen(LocalPlayer player, FoodPouchData foodPouchData, int containerId) {
 		AbstractContainerMenu menu = player.containerMenu;
 		if(menu.containerId == containerId && menu instanceof FoodPouchMenu foodPouchMenu) {
-			foodPouchMenu.setStackedItems(stackedItems);
+			foodPouchMenu.setContent(foodPouchData);
 			foodPouchMenu.runSlotUpdateListener();
 			return true;
 		}

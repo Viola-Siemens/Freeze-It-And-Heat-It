@@ -2,13 +2,12 @@ package com.hexagram2021.fiahi.register;
 
 import com.google.common.collect.Lists;
 import com.hexagram2021.fiahi.common.item.FoodPouchItem;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -16,7 +15,7 @@ import java.util.function.Supplier;
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
 
 public class FIAHIItems {
-	private static final DeferredRegister<Item> REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+	private static final DeferredRegister<Item> REGISTER = DeferredRegister.create(Registries.ITEM, MODID);
 
 	public static final ItemEntry<FoodPouchItem> FOOD_POUCH = ItemEntry.register("food_pouch", () -> new FoodPouchItem(new Item.Properties().stacksTo(1)));
 
@@ -28,11 +27,11 @@ public class FIAHIItems {
 	}
 
 	public static class ItemEntry<T extends Item> implements Supplier<T>, ItemLike {
-		private final RegistryObject<T> regObject;
+		private final DeferredHolder<Item, T> regObject;
 
 		public static final List<ItemEntry<? extends Item>> ALL_ITEMS = Lists.newArrayList();
 
-		private ItemEntry(RegistryObject<T> regObject) {
+		private ItemEntry(DeferredHolder<Item, T> regObject) {
 			this.regObject = regObject;
 			ALL_ITEMS.add(this);
 		}
@@ -49,10 +48,6 @@ public class FIAHIItems {
 		@Override
 		public Item asItem() {
 			return this.regObject.get();
-		}
-
-		public ResourceLocation getId() {
-			return this.regObject.getId();
 		}
 	}
 }

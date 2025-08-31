@@ -1,27 +1,29 @@
 package com.hexagram2021.fiahi.common.config;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
 
 public final class FIAHICommonConfig {
-	private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-	private static final ForgeConfigSpec SPEC;
+	private static final String REGISTRY_NAME_MATCHER = "([a-z0-9_.-]+:[a-z0-9_/.-]+)";
 
-	public static final ForgeConfigSpec.ConfigValue<List<? extends String>> NEVER_FROZEN_FOODS;
-	public static final ForgeConfigSpec.ConfigValue<List<? extends String>> NEVER_ROTTEN_FOODS;
+	private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+	private static final ModConfigSpec SPEC;
 
-	public static final ForgeConfigSpec.BooleanValue ENABLE_FROZEN;
-	public static final ForgeConfigSpec.BooleanValue ENABLE_ROTTEN;
+	public static final ModConfigSpec.ConfigValue<List<? extends String>> NEVER_FROZEN_FOODS;
+	public static final ModConfigSpec.ConfigValue<List<? extends String>> NEVER_ROTTEN_FOODS;
 
-	public static final ForgeConfigSpec.IntValue TEMPERATURE_CHECKER_INTERVAL;
-	public static final ForgeConfigSpec.IntValue TEMPERATURE_BALANCE_RATE;
+	public static final ModConfigSpec.BooleanValue ENABLE_FROZEN;
+	public static final ModConfigSpec.BooleanValue ENABLE_ROTTEN;
 
-	public static final ForgeConfigSpec.DoubleValue FROZEN_SPEED_MULTIPLIER;
-	public static final ForgeConfigSpec.DoubleValue ROTTEN_SPEED_MULTIPLIER;
+	public static final ModConfigSpec.IntValue TEMPERATURE_CHECKER_INTERVAL;
+	public static final ModConfigSpec.IntValue TEMPERATURE_BALANCE_RATE;
 
-	public static final ForgeConfigSpec.ConfigValue<List<? extends String>> STABLE_TEMPERATURE_CONTAINERS;
+	public static final ModConfigSpec.DoubleValue FROZEN_SPEED_MULTIPLIER;
+	public static final ModConfigSpec.DoubleValue ROTTEN_SPEED_MULTIPLIER;
+
+	public static final ModConfigSpec.ConfigValue<List<? extends String>> STABLE_TEMPERATURE_CONTAINERS;
 
 	private FIAHICommonConfig() {}
 
@@ -29,17 +31,17 @@ public final class FIAHICommonConfig {
 		BUILDER.push("fiahi-common-config");
 			NEVER_FROZEN_FOODS = BUILDER.comment("Which foods will never be frozen.")
 					.defineList("NEVER_FROZEN_FOODS", List.of(
-							new ResourceLocation("dried_kelp").toString()
-					), o -> o instanceof String str && ResourceLocation.isValidResourceLocation(str));
+							ResourceLocation.withDefaultNamespace("dried_kelp").toString()
+					), () -> "fiahi:example", o -> o instanceof String str && str.matches(REGISTRY_NAME_MATCHER));
 			NEVER_ROTTEN_FOODS = BUILDER.comment("Which foods will never be rotten.")
 					.defineList("NEVER_ROTTEN_FOODS", List.of(
-							new ResourceLocation("golden_apple").toString(),
-							new ResourceLocation("enchanted_golden_apple").toString(),
-							new ResourceLocation("golden_carrot").toString(),
-							new ResourceLocation("emeraldcraft", "golden_peach").toString(),
-							new ResourceLocation("emeraldcraft", "agate_apple").toString(),
-							new ResourceLocation("emeraldcraft", "jade_apple").toString()
-					), o -> o instanceof String str && ResourceLocation.isValidResourceLocation(str));
+							ResourceLocation.withDefaultNamespace("golden_apple").toString(),
+							ResourceLocation.withDefaultNamespace("enchanted_golden_apple").toString(),
+							ResourceLocation.withDefaultNamespace("golden_carrot").toString(),
+							ResourceLocation.fromNamespaceAndPath("emeraldcraft", "golden_peach").toString(),
+							ResourceLocation.fromNamespaceAndPath("emeraldcraft", "agate_apple").toString(),
+							ResourceLocation.fromNamespaceAndPath("emeraldcraft", "jade_apple").toString()
+					), () -> "fiahi:example", o -> o instanceof String str && str.matches(REGISTRY_NAME_MATCHER));
 			ENABLE_FROZEN = BUILDER.comment("If false, foods will never be frozen.")
 					.define("ENABLE_FROZEN", true);
 			ENABLE_ROTTEN = BUILDER.comment("If false, foods will never be rotten.")
@@ -55,14 +57,14 @@ public final class FIAHICommonConfig {
 					.defineInRange("ROTTEN_SPEED_MULTIPLIER", 0.75D, 0.01D, 100.0D);
 			STABLE_TEMPERATURE_CONTAINERS = BUILDER.comment("A whitelist of containers. Food items in these block entities will never be affected by temperature.")
 					.defineList("STABLE_TEMPERATURE_CONTAINERS", List.of(
-							new ResourceLocation("cold_sweat", "boiler").toString(),
-							new ResourceLocation("cold_sweat", "icebox").toString()
-					), o -> o instanceof String str && ResourceLocation.isValidResourceLocation(str));
+							ResourceLocation.fromNamespaceAndPath("cold_sweat", "boiler").toString(),
+							ResourceLocation.fromNamespaceAndPath("cold_sweat", "icebox").toString()
+					), () -> "fiahi:example", o -> o instanceof String str && str.matches(REGISTRY_NAME_MATCHER));
 		BUILDER.pop();
 		SPEC = BUILDER.build();
 	}
 
-	public static ForgeConfigSpec getConfig() {
+	public static ModConfigSpec getConfig() {
 		return SPEC;
 	}
 }

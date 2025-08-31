@@ -1,19 +1,29 @@
 package com.hexagram2021.fiahi.register;
 
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
+import com.hexagram2021.fiahi.common.item.capability.impl.FrozenRottenFood;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraft.world.level.ItemLike;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.capabilities.ItemCapability;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
 
+@EventBusSubscriber(modid = MODID)
 public class FIAHICapabilities {
-	public static final ResourceLocation FOOD_CAPABILITY_ID = new ResourceLocation(MODID, "food");
-	public static final Capability<IFrozenRottenFood> FOOD_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
+	public static final ResourceLocation FOOD_CAPABILITY_ID = ResourceLocation.fromNamespaceAndPath(MODID, "food");
+	public static final ItemCapability<IFrozenRottenFood, Void> FOOD_CAPABILITY = ItemCapability.createVoid(FOOD_CAPABILITY_ID, IFrozenRottenFood.class);
 
+	@SubscribeEvent
 	public static void register(RegisterCapabilitiesEvent event) {
-		event.register(IFrozenRottenFood.class);
+		event.registerItem(
+				FOOD_CAPABILITY,
+				(itemStack, ignored) -> new FrozenRottenFood(itemStack),
+				BuiltInRegistries.ITEM.stream().filter(item -> item.components().has(DataComponents.FOOD)).toArray(ItemLike[]::new)
+		);
 	}
 }

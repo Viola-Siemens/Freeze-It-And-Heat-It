@@ -1,9 +1,7 @@
 package com.hexagram2021.fiahi.common.item.capability.impl;
 
-import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import com.hexagram2021.fiahi.register.FIAHIAttachmentTypes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -14,6 +12,7 @@ public class FrozenRottenFood implements IFrozenRottenFood {
 
 	public FrozenRottenFood(ItemStack self) {
 		this.self = self;
+		this.syncFoodTag();
 	}
 
 	@Override
@@ -37,24 +36,23 @@ public class FrozenRottenFood implements IFrozenRottenFood {
 	@Override
 	public void updateFoodTag() {
 		int temperature = (int)(this.getTemperature() / TEMPERATURE_STEP) * TEMPERATURE_STEP;
-		CompoundTag nbt = this.self.getTag();
-		if(nbt == null) {
+		Integer attachment = this.self.get(FIAHIAttachmentTypes.FOOD_TEMPERATURE);
+		if(attachment == null) {
 			if(temperature == 0) {
 				return;
 			}
-			nbt = new CompoundTag();
+			attachment = 0;
 		}
-		nbt.putInt(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE, temperature);
 
-		this.self.setTag(nbt);
+		this.self.set(FIAHIAttachmentTypes.FOOD_TEMPERATURE.get(), attachment);
 	}
 
 	public void syncFoodTag() {
-		CompoundTag nbt = this.self.getTag();
-		if(nbt == null || !nbt.contains(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE, Tag.TAG_ANY_NUMERIC)) {
+		Integer attachment = this.self.get(FIAHIAttachmentTypes.FOOD_TEMPERATURE);
+		if(attachment == null) {
 			this.setTemperature(0.0D);
 			return;
 		}
-		this.setTemperature(nbt.getDouble(ItemStackFoodHandler.FIAHI_TAG_TEMPERATURE));
+		this.setTemperature(attachment);
 	}
 }

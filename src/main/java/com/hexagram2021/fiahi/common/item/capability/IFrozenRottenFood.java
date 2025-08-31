@@ -1,11 +1,20 @@
 package com.hexagram2021.fiahi.common.item.capability;
 
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
+import com.hexagram2021.fiahi.register.FIAHICapabilities;
+import com.hexagram2021.fiahi.register.FIAHIItems;
 import com.momosoftworks.coldsweat.config.ConfigSettings;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
+
+import java.util.function.Consumer;
+import java.util.function.ToDoubleFunction;
 
 import static com.hexagram2021.fiahi.common.util.RegistryHelper.getRegistryName;
 import static com.hexagram2021.fiahi.register.FIAHIItemTags.LEFTOVERS;
@@ -89,6 +98,19 @@ public interface IFrozenRottenFood {
 	void updateFoodTag();
 
 	static boolean canBeFrozenRotten(ItemStack itemStack) {
-		return itemStack.isEdible() && !itemStack.is(LEFTOVERS);
+		return itemStack.has(DataComponents.FOOD) && !itemStack.is(LEFTOVERS);
+	}
+
+	static void tick(ItemStack food, Consumer<ItemStack> leftOverSetter, ToDoubleFunction<IFrozenRottenFood> temperatureUpdater, @Nullable LivingEntity entity) {
+		IFrozenRottenFood c = food.getCapability(FIAHICapabilities.FOOD_CAPABILITY);
+		if(c != null) {
+			c.foodTick(temperatureUpdater.applyAsDouble(c), food.getItem());
+			if(c.getTemperature() > 120) {
+				FoodProperties foodProperties = food.getFoodProperties(entity);
+				if(foodProperties != null) {
+					leftOverSetter.accept(new ItemStack(food.is(ItemTags.MEAT) ? FIAHIItems.LEFTOVER_MEAT : FIAHIItems.LEFTOVER_VEGETABLE, food.getCount()));
+				}
+			}
+		}
 	}
 }

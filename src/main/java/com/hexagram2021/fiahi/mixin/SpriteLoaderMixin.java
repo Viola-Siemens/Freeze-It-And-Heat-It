@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Final;
@@ -40,30 +41,25 @@ public abstract class SpriteLoaderMixin {
 			contents.stream()
 					.filter(content -> content != null && (content.name().getPath().contains("item/") || content.name().getPath().contains("items/")))
 					.forEach(content -> {
+						ResourceMetadata metadata = content.metadata();
+						NativeImage original = content.getOriginalImage();
+
+						FrameSize frameSize = metadata.getSection(AnimationMetadataSection.SERIALIZER)
+								.map(section -> section.calculateFrameSize(original.getWidth(), original.getHeight()))
+								.orElse(new FrameSize(original.getWidth(), original.getHeight()));
+
 						for (int level = 1; level <= 3; ++level) {
 							NativeImage coldImage = new NativeImage(content.getOriginalImage().format(), content.getOriginalImage().getWidth(), content.getOriginalImage().getHeight(), true);
 							coldImage.copyFrom(content.getOriginalImage());
 							this.fiahi$remapColdImage(coldImage, Pair.of(content.width(), content.height()), level);
-							SpriteContents frozenContent = new SpriteContents(
-									content.name().withSuffix(".frozen.%d".formatted(level)),
-									new FrameSize(content.width(), content.height()),
-									coldImage,
-									AnimationMetadataSection.EMPTY,
-									content.forgeMeta
-							);
+							SpriteContents frozenContent = new SpriteContents(content.name().withSuffix(".frozen.%d".formatted(level)), frameSize, coldImage, metadata);
 							frozenContent.animatedTexture = content.animatedTexture;
 							extendedContents.add(frozenContent);
 
 							NativeImage hotImage = new NativeImage(content.getOriginalImage().format(), content.getOriginalImage().getWidth(), content.getOriginalImage().getHeight(), true);
 							hotImage.copyFrom(content.getOriginalImage());
 							this.fiahi$remapHotImage(hotImage, Pair.of(content.width(), content.height()), level);
-							SpriteContents rottenContent = new SpriteContents(
-									content.name().withSuffix(".rotten.%d".formatted(level)),
-									new FrameSize(content.width(), content.height()),
-									hotImage,
-									AnimationMetadataSection.EMPTY,
-									content.forgeMeta
-							);
+							SpriteContents rottenContent = new SpriteContents(content.name().withSuffix(".rotten.%d".formatted(level)), frameSize, hotImage, metadata);
 							rottenContent.animatedTexture = content.animatedTexture;
 							extendedContents.add(rottenContent);
 						}

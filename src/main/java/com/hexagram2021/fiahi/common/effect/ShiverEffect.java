@@ -13,10 +13,11 @@ public class ShiverEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int level) {
+	public boolean applyEffectTick(LivingEntity entity, int level) {
 		if(entity.level().isClientSide) {
 			RandomSource random = entity.getRandom();
 			entity.level().addParticle(ParticleTypes.SNOWFLAKE, entity.getX(), entity.getY() + 1.0D, entity.getZ(), Mth.randomBetween(random, -1.0F, 1.0F) / 12.0F, 0.05F, Mth.randomBetween(random, -1.0F, 1.0F) / 12.0F);
 		}
+		return true;
 	}
 }

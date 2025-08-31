@@ -6,20 +6,20 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.nbt.CompoundTag;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
-public interface IPouchedFoodDataType {
-	@Nullable
-	IPouchedFoodData fromStackNBT(CompoundTag nbt);
-	Codec<? extends IPouchedFoodData> codec();
+public interface IPouchedFoodDataType<T> {
+	DataComponentType<T> getDataComponentType();
+	MapCodec<? extends IPouchedFoodData<T>> codec();
+	IPouchedFoodData<T> create(T object);
 
-	Map<ResourceLocation, IPouchedFoodDataType> POUCHED_FOOD_DATA_TYPES = Maps.newHashMap();
-	Map<IPouchedFoodDataType, ResourceLocation> POUCHED_FOOD_DATA_IDS = Maps.newIdentityHashMap();
-	static void register(ResourceLocation id, IPouchedFoodDataType pouchedFoodDataType) {
+	Map<ResourceLocation, IPouchedFoodDataType<?>> POUCHED_FOOD_DATA_TYPES = Maps.newHashMap();
+	Map<IPouchedFoodDataType<?>, ResourceLocation> POUCHED_FOOD_DATA_IDS = Maps.newIdentityHashMap();
+	static void register(ResourceLocation id, IPouchedFoodDataType<?> pouchedFoodDataType) {
 		if(POUCHED_FOOD_DATA_TYPES.containsKey(id)) {
 			FIAHILogger.warn(new IllegalStateException("Duplicate pouched food data type registered: %s.".formatted(id)));
 		}
@@ -30,9 +30,9 @@ public interface IPouchedFoodDataType {
 		POUCHED_FOOD_DATA_IDS.put(pouchedFoodDataType, id);
 	}
 
-	Codec<IPouchedFoodDataType> REGISTRY_CODEC = new Codec<>() {
+	Codec<IPouchedFoodDataType<?>> REGISTRY_CODEC = new Codec<>() {
 		@Override
-		public <R> DataResult<Pair<IPouchedFoodDataType, R>> decode(DynamicOps<R> ops, R input) {
+		public <R> DataResult<Pair<IPouchedFoodDataType<?>, R>> decode(DynamicOps<R> ops, R input) {
 			return ResourceLocation.CODEC.decode(ops, input).flatMap(pair -> {
 				if(!POUCHED_FOOD_DATA_TYPES.containsKey(pair.getFirst())) {
 					return DataResult.error(() -> "Unexpected type: %s".formatted(pair.getFirst()));
@@ -42,7 +42,7 @@ public interface IPouchedFoodDataType {
 		}
 
 		@Override
-		public <R> DataResult<R> encode(IPouchedFoodDataType input, DynamicOps<R> ops, R prefix) {
+		public <R> DataResult<R> encode(IPouchedFoodDataType<?> input, DynamicOps<R> ops, R prefix) {
 			ResourceLocation id = POUCHED_FOOD_DATA_IDS.get(input);
 			if(id == null) {
 				return DataResult.error(() -> "Unknown pouched food data type: %s".formatted(input));

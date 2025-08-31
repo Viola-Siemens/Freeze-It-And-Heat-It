@@ -15,6 +15,6 @@ public final class FIAHIItemTags {
 
 	@SuppressWarnings("SameParameterValue")
 	private static TagKey<Item> create(String name) {
-		return TagKey.create(Registries.ITEM, new ResourceLocation(MODID, name));
+		return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(MODID, name));
 	}
 }
