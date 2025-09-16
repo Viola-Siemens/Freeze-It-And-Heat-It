@@ -42,23 +42,10 @@ public abstract class SpriteLoaderMixin {
 					.forEach(content -> {
 						Boolean skip_frozen = false;
 						Boolean skip_rotten = false;
-						if (content.name().getPath().contains("item/") && (!(content.name().getPath().equals("item/")))) {
-							if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("item/")[1])) {
-							skip_rotten = true;
-							}
-						} if (content.name().getPath().contains("items/") && (!(content.name().getPath().equals("items/")))) {
-							if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items/")[1])) {
-							skip_rotten = true;
-							}
-						}
-						if (content.name().getPath().contains("item/") && (!(content.name().getPath().equals("item/")))) {
-							if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("item/")[1])) {
+						if (!(content.name().getPath().matches("items?\\/")) && (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1]))) {
 							skip_frozen = true;
-							}
-						} if (content.name().getPath().contains("items/") && (!(content.name().getPath().equals("items/")))) {
-							if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items/")[1])) {
-							skip_frozen = true;
-							}
+						} else if (!(content.name().getPath().matches("items?\\/")) && (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1]))) {
+							skip_rotten = true;
 						}
 
 						for (int level = 1; level <= 3; ++level) {
