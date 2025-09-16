@@ -48,6 +48,10 @@ public abstract class SpriteLoaderMixin {
 							skip_rotten = true;
 						}
 
+						if (!(content.name().getPath().matches("items?\\/")) && (content.getOriginalImage().getWidth() > 16 || content.getOriginalImage().getHeight() > 16)) {
+									System.out.println(String.format("%s is %d * %d, please consider excluding it from being frozen and/or rotten",(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1]),content.getOriginalImage().getWidth(),content.getOriginalImage().getHeight()));
+								}
+
 						for (int level = 1; level <= 3; ++level) {
 							if (!skip_frozen) {
 								NativeImage coldImage = new NativeImage(content.getOriginalImage().format(), content.getOriginalImage().getWidth(), content.getOriginalImage().getHeight(), true);
