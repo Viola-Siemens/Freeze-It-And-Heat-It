@@ -42,15 +42,15 @@ public abstract class SpriteLoaderMixin {
 					.forEach(content -> {
 						Boolean skip_frozen = false;
 						Boolean skip_rotten = false;
-						if (!(content.name().getPath().matches("items?\\/")) && (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1]))) {
-							skip_frozen = true;
-						} else if (!(content.name().getPath().matches("items?\\/")) && (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1]))) {
-							skip_rotten = true;
+						if (!content.name().getPath().matches("items?\\/")) {
+							if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1])) {
+								skip_frozen = true;
+							} else if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1])) {
+								skip_rotten = true;
+							} else if (content.width() > 16 || content.height() > 16) {
+								System.out.println(String.format("%s is %d * %d, please consider excluding it from being frozen and/or rotten",(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1]),content.width(),content.height()));
+							}
 						}
-
-						if (!(content.name().getPath().matches("items?\\/")) && (content.width() > 16 || content.height() > 16)) {
-									System.out.println(String.format("%s is %d * %d, please consider excluding it from being frozen and/or rotten",(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1]),content.width(),content.height()));
-								}
 
 						for (int level = 1; level <= 3; ++level) {
 							if (!skip_frozen) {
