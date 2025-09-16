@@ -47,7 +47,7 @@ public abstract class SpriteLoaderMixin {
 								skip_frozen = true;
 							} if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1])) {
 								skip_rotten = true;
-							} if ((content.width() > 16 || content.height() > 16) && !skip_frozen %% !skip_rotten) {
+							} if ((content.width() > 16 || content.height() > 16) && !skip_frozen && !skip_rotten) {
 								System.out.println(String.format("%s is %d * %d, please consider excluding it from being frozen and/or rotten",(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1]),content.width(),content.height()));
 							}
 						}
