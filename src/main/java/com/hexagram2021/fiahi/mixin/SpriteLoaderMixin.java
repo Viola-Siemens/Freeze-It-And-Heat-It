@@ -1,5 +1,6 @@
 package com.hexagram2021.fiahi.mixin;
 
+import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -36,36 +37,59 @@ public abstract class SpriteLoaderMixin {
 	public List<SpriteContents> fiahi$modifyStitchContents(List<SpriteContents> contents) {
 		if (this.location.equals(TextureAtlas.LOCATION_BLOCKS)) {
 			ArrayList<SpriteContents> extendedContents = new ArrayList<>(contents);
-
 			contents.stream()
 					.filter(content -> content != null && (content.name().getPath().contains("item/") || content.name().getPath().contains("items/")))
 					.forEach(content -> {
-						for (int level = 1; level <= 3; ++level) {
-							NativeImage coldImage = new NativeImage(content.getOriginalImage().format(), content.getOriginalImage().getWidth(), content.getOriginalImage().getHeight(), true);
-							coldImage.copyFrom(content.getOriginalImage());
-							this.fiahi$remapColdImage(coldImage, Pair.of(content.width(), content.height()), level);
-							SpriteContents frozenContent = new SpriteContents(
-									content.name().withSuffix(".frozen.%d".formatted(level)),
-									new FrameSize(content.width(), content.height()),
-									coldImage,
-									AnimationMetadataSection.EMPTY,
-									content.forgeMeta
-							);
-							frozenContent.animatedTexture = content.animatedTexture;
-							extendedContents.add(frozenContent);
+						Boolean skip_frozen = false;
+						Boolean skip_rotten = false;
+						if (content.name().getPath().contains("item/") && (!(content.name().getPath().equals("item/")))) {
+							if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("item/")[1])) {
+							skip_rotten = true;
+							}
+						} if (content.name().getPath().contains("items/") && (!(content.name().getPath().equals("items/")))) {
+							if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items/")[1])) {
+							skip_rotten = true;
+							}
+						}
+						if (content.name().getPath().contains("item/") && (!(content.name().getPath().equals("item/")))) {
+							if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("item/")[1])) {
+							skip_frozen = true;
+							}
+						} if (content.name().getPath().contains("items/") && (!(content.name().getPath().equals("items/")))) {
+							if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items/")[1])) {
+							skip_frozen = true;
+							}
+						}
 
-							NativeImage hotImage = new NativeImage(content.getOriginalImage().format(), content.getOriginalImage().getWidth(), content.getOriginalImage().getHeight(), true);
-							hotImage.copyFrom(content.getOriginalImage());
-							this.fiahi$remapHotImage(hotImage, Pair.of(content.width(), content.height()), level);
-							SpriteContents rottenContent = new SpriteContents(
-									content.name().withSuffix(".rotten.%d".formatted(level)),
-									new FrameSize(content.width(), content.height()),
-									hotImage,
-									AnimationMetadataSection.EMPTY,
-									content.forgeMeta
-							);
-							rottenContent.animatedTexture = content.animatedTexture;
-							extendedContents.add(rottenContent);
+						for (int level = 1; level <= 3; ++level) {
+							if (!skip_frozen) {
+								NativeImage coldImage = new NativeImage(content.getOriginalImage().format(), content.getOriginalImage().getWidth(), content.getOriginalImage().getHeight(), true);
+								coldImage.copyFrom(content.getOriginalImage());
+								this.fiahi$remapColdImage(coldImage, Pair.of(content.width(), content.height()), level);
+								SpriteContents frozenContent = new SpriteContents(
+										content.name().withSuffix(".frozen.%d".formatted(level)),
+										new FrameSize(content.width(), content.height()),
+										coldImage,
+										AnimationMetadataSection.EMPTY,
+										content.forgeMeta
+								);
+								frozenContent.animatedTexture = content.animatedTexture;
+								extendedContents.add(frozenContent);
+							}
+							if (!skip_rotten) {
+								NativeImage hotImage = new NativeImage(content.getOriginalImage().format(), content.getOriginalImage().getWidth(), content.getOriginalImage().getHeight(), true);
+								hotImage.copyFrom(content.getOriginalImage());
+								this.fiahi$remapHotImage(hotImage, Pair.of(content.width(), content.height()), level);
+								SpriteContents rottenContent = new SpriteContents(
+										content.name().withSuffix(".rotten.%d".formatted(level)),
+										new FrameSize(content.width(), content.height()),
+										hotImage,
+										AnimationMetadataSection.EMPTY,
+										content.forgeMeta
+								);
+								rottenContent.animatedTexture = content.animatedTexture;
+								extendedContents.add(rottenContent);
+							}
 						}
 					});
 
