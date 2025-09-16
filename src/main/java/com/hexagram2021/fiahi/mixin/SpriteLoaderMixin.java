@@ -48,8 +48,8 @@ public abstract class SpriteLoaderMixin {
 							skip_rotten = true;
 						}
 
-						if (!(content.name().getPath().matches("items?\\/")) && (content.getOriginalImage().getWidth() > 16 || content.getOriginalImage().getHeight() > 16)) {
-									System.out.println(String.format("%s is %d * %d, please consider excluding it from being frozen and/or rotten",(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1]),content.getOriginalImage().getWidth(),content.getOriginalImage().getHeight()));
+						if (!(content.name().getPath().matches("items?\\/")) && (content.width() > 16 || content.height() > 16)) {
+									System.out.println(String.format("%s is %d * %d, please consider excluding it from being frozen and/or rotten",(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1]),content.width(),content.height()));
 								}
 
 						for (int level = 1; level <= 3; ++level) {
