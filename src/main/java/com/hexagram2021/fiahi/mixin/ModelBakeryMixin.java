@@ -42,15 +42,6 @@ public abstract class ModelBakeryMixin {
 					spriteGetter.apply(spriteId, material) : sprite;
 		};
 		this.topLevelModels.forEach(((spriteId, unbakedModel) -> {
-			// Boolean skip_frozen = false;
-			// Boolean skip_rotten = false;
-			// if (!spriteId.getPath().matches("")) {
-			// 	if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
-			// 		skip_frozen = true;
-			// 	} if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
-			// 		skip_rotten = true;
-			// 	}
-			// }
 			Boolean skip_frozen = false;
 			Boolean skip_rotten = false;
 			if (!spriteId.getPath().matches("^$")) {
