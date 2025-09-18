@@ -1,6 +1,5 @@
 package com.hexagram2021.fiahi.client.model;
 
-import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -24,7 +23,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.Nullable;
-import static com.hexagram2021.fiahi.common.util.RegistryHelper.getRegistryName;
 
 import java.util.List;
 
