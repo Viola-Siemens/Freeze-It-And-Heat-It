@@ -1,5 +1,6 @@
 package com.hexagram2021.fiahi.mixin;
 
+import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.client.model.FIAHIBakedModel;
 import com.hexagram2021.fiahi.client.model.FIAHIModelBaker;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -67,6 +68,15 @@ public abstract class ModelBakeryMixin {
 
 	@Unique
 	private void fiahi$putBakedModel(ResourceLocation spriteId, BakedModel frozen1, BakedModel frozen2, BakedModel frozen3, BakedModel rotten1, BakedModel rotten2, BakedModel rotten3) {
-		this.bakedTopLevelModels.put(spriteId, new FIAHIBakedModel(this.bakedTopLevelModels.get(spriteId), frozen1, frozen2, frozen3, rotten1, rotten2, rotten3));
+		Boolean skip_frozen = false;
+		Boolean skip_rotten = false;
+		if (!spriteId.getPath().matches("")) {
+			if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
+				skip_frozen = true;
+			} if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
+				skip_rotten = true;
+			}
+		}
+		this.bakedTopLevelModels.put(spriteId, new FIAHIBakedModel(this.bakedTopLevelModels.get(spriteId), skip_frozen ? this.bakedTopLevelModels.get(spriteId) : frozen1, skip_frozen ? this.bakedTopLevelModels.get(spriteId) : frozen2, skip_frozen ? this.bakedTopLevelModels.get(spriteId) : frozen3, skip_rotten ? this.bakedTopLevelModels.get(spriteId) : rotten1, skip_rotten ? this.bakedTopLevelModels.get(spriteId) : rotten2, skip_rotten ? this.bakedTopLevelModels.get(spriteId) : rotten3));
 	}
 }

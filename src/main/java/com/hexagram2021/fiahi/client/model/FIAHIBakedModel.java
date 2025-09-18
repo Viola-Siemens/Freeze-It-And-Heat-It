@@ -88,9 +88,6 @@ public record FIAHIBakedModel(BakedModel original, BakedModel frozen1, BakedMode
 		int frozenLevel = IFrozenRottenFood.getFrozenLevel(temp);
 		int rottenLevel = IFrozenRottenFood.getRottenLevel(temp);
 		if(frozenLevel > 0) {
-			if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(getRegistryName(itemStack.getItem()).toString())) {
-				return this.original;
-			}
 			return switch (frozenLevel) {
 				case 1 -> this.frozen1;
 				case 2 -> this.frozen2;
@@ -99,9 +96,6 @@ public record FIAHIBakedModel(BakedModel original, BakedModel frozen1, BakedMode
 			};
 		}
 		if(rottenLevel > 0) {
-			if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(getRegistryName(itemStack.getItem()).toString())) {
-				return this.original;
-			}
 			return switch (rottenLevel) {
 				case 1 -> this.rotten1;
 				case 2 -> this.rotten2;
