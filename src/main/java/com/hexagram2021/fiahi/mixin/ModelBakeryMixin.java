@@ -54,12 +54,12 @@ public abstract class ModelBakeryMixin {
 			if (unbakedModel instanceof BlockModel && ((BlockModel) unbakedModel).getRootModel() == ModelBakery.GENERATION_MARKER) {
 				this.fiahi$putBakedModel(
 						spriteId,
-						this.fiahi$bakeModel(spriteMapper, String.format(skip_frozen ? "" : ".frozen.1"), spriteId),
-						this.fiahi$bakeModel(spriteMapper, String.format(skip_frozen ? "" : ".frozen.2"), spriteId),
-						this.fiahi$bakeModel(spriteMapper, String.format(skip_frozen ? "" : ".frozen.3"), spriteId),
-						this.fiahi$bakeModel(spriteMapper, String.format(skip_rotten ? "" : ".rotten.1"), spriteId),
-						this.fiahi$bakeModel(spriteMapper, String.format(skip_rotten ? "" : ".rotten.2"), spriteId),
-						this.fiahi$bakeModel(spriteMapper, String.format(skip_rotten ? "" : ".rotten.3"), spriteId)
+						this.fiahi$bakeModel(spriteMapper, skip_frozen ? "" : ".frozen.1", spriteId),
+						this.fiahi$bakeModel(spriteMapper, skip_frozen ? "" : ".frozen.2", spriteId),
+						this.fiahi$bakeModel(spriteMapper, skip_frozen ? "" : ".frozen.3", spriteId),
+						this.fiahi$bakeModel(spriteMapper, skip_rotten ? "" : ".rotten.1", spriteId),
+						this.fiahi$bakeModel(spriteMapper, skip_rotten ? "" : ".rotten.2", spriteId),
+						this.fiahi$bakeModel(spriteMapper, skip_rotten ? "" : ".rotten.3", spriteId)
 				);
 			}
 		}));
