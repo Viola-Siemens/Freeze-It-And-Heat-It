@@ -42,15 +42,24 @@ public abstract class ModelBakeryMixin {
 					spriteGetter.apply(spriteId, material) : sprite;
 		};
 		this.topLevelModels.forEach(((spriteId, unbakedModel) -> {
+			Boolean skip_frozen = false;
+			Boolean skip_rotten = false;
+			if (!spriteId.getPath().matches("")) {
+				if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
+					skip_frozen = true;
+				} if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
+					skip_rotten = true;
+				}
+			}
 			if (unbakedModel instanceof BlockModel && ((BlockModel) unbakedModel).getRootModel() == ModelBakery.GENERATION_MARKER) {
 				this.fiahi$putBakedModel(
 						spriteId,
-						this.fiahi$bakeModel(spriteMapper, ".frozen.1", spriteId),
-						this.fiahi$bakeModel(spriteMapper, ".frozen.2", spriteId),
-						this.fiahi$bakeModel(spriteMapper, ".frozen.3", spriteId),
-						this.fiahi$bakeModel(spriteMapper, ".rotten.1", spriteId),
-						this.fiahi$bakeModel(spriteMapper, ".rotten.2", spriteId),
-						this.fiahi$bakeModel(spriteMapper, ".rotten.3", spriteId)
+						skip_frozen ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".frozen.1", spriteId),
+						skip_frozen ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".frozen.2", spriteId),
+						skip_frozen ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".frozen.3", spriteId),
+						skip_rotten ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".rotten.1", spriteId),
+						skip_rotten ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".rotten.2", spriteId),
+						skip_rotten ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".rotten.3", spriteId)
 				);
 			}
 		}));
@@ -68,15 +77,6 @@ public abstract class ModelBakeryMixin {
 
 	@Unique
 	private void fiahi$putBakedModel(ResourceLocation spriteId, BakedModel frozen1, BakedModel frozen2, BakedModel frozen3, BakedModel rotten1, BakedModel rotten2, BakedModel rotten3) {
-		Boolean skip_frozen = false;
-		Boolean skip_rotten = false;
-		if (!spriteId.getPath().matches("")) {
-			if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
-				skip_frozen = true;
-			} if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
-				skip_rotten = true;
-			}
-		}
-		this.bakedTopLevelModels.put(spriteId, new FIAHIBakedModel(this.bakedTopLevelModels.get(spriteId), skip_frozen ? this.bakedTopLevelModels.get(spriteId) : frozen1, skip_frozen ? this.bakedTopLevelModels.get(spriteId) : frozen2, skip_frozen ? this.bakedTopLevelModels.get(spriteId) : frozen3, skip_rotten ? this.bakedTopLevelModels.get(spriteId) : rotten1, skip_rotten ? this.bakedTopLevelModels.get(spriteId) : rotten2, skip_rotten ? this.bakedTopLevelModels.get(spriteId) : rotten3));
+		this.bakedTopLevelModels.put(spriteId, new FIAHIBakedModel(this.bakedTopLevelModels.get(spriteId), frozen1, frozen2, frozen3, rotten1, rotten2, rotten3));
 	}
 }
