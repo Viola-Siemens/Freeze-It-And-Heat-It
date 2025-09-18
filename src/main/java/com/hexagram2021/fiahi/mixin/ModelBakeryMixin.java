@@ -42,13 +42,29 @@ public abstract class ModelBakeryMixin {
 					spriteGetter.apply(spriteId, material) : sprite;
 		};
 		this.topLevelModels.forEach(((spriteId, unbakedModel) -> {
+			// Boolean skip_frozen = false;
+			// Boolean skip_rotten = false;
+			// if (!spriteId.getPath().matches("")) {
+			// 	if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
+			// 		skip_frozen = true;
+			// 	} if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
+			// 		skip_rotten = true;
+			// 	}
+			// }
 			Boolean skip_frozen = false;
 			Boolean skip_rotten = false;
-			if (!spriteId.getPath().matches("")) {
-				if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
-					skip_frozen = true;
-				} if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(spriteId.getNamespace() + ":" + spriteId.getPath())) {
-					skip_rotten = true;
+			if (!spriteId.getPath().matches("^$")) {
+				String resource = (spriteId.getNamespace() + ":" + spriteId.getPath());
+				System.out.println("BBB " + resource);
+				for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
+					if (resource.matches(entry)) {
+						skip_frozen = true;
+					}
+				}
+				for (String entry : FIAHICommonConfig.NEVER_ROTTEN_FOODS.get()) {
+					if (resource.matches(entry)) {
+						skip_rotten = true;
+					}
 				}
 			}
 			if (unbakedModel instanceof BlockModel && ((BlockModel) unbakedModel).getRootModel() == ModelBakery.GENERATION_MARKER) {

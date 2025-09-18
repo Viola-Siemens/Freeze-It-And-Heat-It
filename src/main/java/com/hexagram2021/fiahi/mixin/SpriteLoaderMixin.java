@@ -43,16 +43,35 @@ public abstract class SpriteLoaderMixin {
 						Boolean skip_frozen = false;
 						Boolean skip_rotten = false;
 						if (!content.name().getPath().matches("items?\\/")) {
-							if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1])) {
-								skip_frozen = true;
-								System.out.println("skip_frozen " + content.name());
-							} if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1])) {
-								skip_rotten = true;
-								System.out.println("skip_rotten " + content.name());
-							} if ((content.width() > 16 || content.height() > 16) && (!skip_frozen || !skip_rotten)) {
-								System.out.println(String.format("%s is %d * %d, please consider excluding it from being frozen and/or rotten",(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/")[1]),content.width(),content.height()));
+							String resource = (content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/",2)[1]);
+							for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
+								if (resource.matches(entry)) {
+									skip_frozen = true;
+									System.out.println("skip_frozen " + content.name());
+								}
+							}
+							for (String entry : FIAHICommonConfig.NEVER_ROTTEN_FOODS.get()) {
+								if (resource.matches(entry)) {
+									skip_rotten = true;
+									System.out.println("skip_rotten " + content.name());
+								}
+							}
+							if ((content.width() > 16 || content.height() > 16) && (!skip_frozen || !skip_rotten)) {
+								System.out.println(String.format("%s is %d * %d, please consider excluding it from being frozen and/or rotten",(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/",2)[1]),content.width(),content.height()));
 							}
 						}
+						// if (!content.name().getPath().matches("items?\\/")) {
+      //
+						// 	if (FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/",2)[1])) {
+						// 		skip_frozen = true;
+						// 		System.out.println("skip_frozen " + content.name());
+						// 	} if (FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/",2)[1])) {
+						// 		skip_rotten = true;
+						// 		System.out.println("skip_rotten " + content.name());
+						// 	} if ((content.width() > 16 || content.height() > 16) && (!skip_frozen || !skip_rotten)) {
+						// 		System.out.println(String.format("%s is %d * %d, please consider excluding it from being frozen and/or rotten",(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/",2)[1]),content.width(),content.height()));
+						// 	}
+						// }
 
 						for (int level = 1; level <= 3; ++level) {
 							if (!skip_frozen) {
