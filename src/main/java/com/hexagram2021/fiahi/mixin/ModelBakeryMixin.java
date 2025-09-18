@@ -54,12 +54,12 @@ public abstract class ModelBakeryMixin {
 			if (unbakedModel instanceof BlockModel && ((BlockModel) unbakedModel).getRootModel() == ModelBakery.GENERATION_MARKER) {
 				this.fiahi$putBakedModel(
 						spriteId,
-						skip_frozen ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".frozen.1", spriteId),
-						skip_frozen ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".frozen.2", spriteId),
-						skip_frozen ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".frozen.3", spriteId),
-						skip_rotten ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".rotten.1", spriteId),
-						skip_rotten ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".rotten.2", spriteId),
-						skip_rotten ? this.fiahi$bakeModel(spriteMapper, "", spriteId) : this.fiahi$bakeModel(spriteMapper, ".rotten.3", spriteId)
+						this.fiahi$bakeModel(spriteMapper, String.format(skip_frozen ? "" : ".frozen.1"), spriteId),
+						this.fiahi$bakeModel(spriteMapper, String.format(skip_frozen ? "" : ".frozen.2"), spriteId),
+						this.fiahi$bakeModel(spriteMapper, String.format(skip_frozen ? "" : ".frozen.3"), spriteId),
+						this.fiahi$bakeModel(spriteMapper, String.format(skip_rotten ? "" : ".rotten.1"), spriteId),
+						this.fiahi$bakeModel(spriteMapper, String.format(skip_rotten ? "" : ".rotten.2"), spriteId),
+						this.fiahi$bakeModel(spriteMapper, String.format(skip_rotten ? "" : ".rotten.3"), spriteId)
 				);
 			}
 		}));
