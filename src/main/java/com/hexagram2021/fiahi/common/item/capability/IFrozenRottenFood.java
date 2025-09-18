@@ -49,11 +49,22 @@ public interface IFrozenRottenFood {
 		}
 		if(level < newLevel) {
 			if(flag == newFlag || level == 0) {
-				if(flag && item != null &&
-						FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(getRegistryName(item).toString())) {
+				Boolean skip_frozen = false;
+				Boolean skip_rotten = false;
+				String item_name = getRegistryName(item).toString();
+				for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
+					if (item_name.matches(entry)) {
+						skip_frozen = true;
+					}
+				}
+				for (String entry : FIAHICommonConfig.NEVER_ROTTEN_FOODS.get()) {
+					if (item_name.matches(entry)) {
+						skip_rotten = true;
+					}
+				}
+				if(flag && item != null && skip_rotten) {
 					this.setTemperature(FROZEN_ROTTEN_THRESHOLD * 2 - EPS);
-				} else if(!flag && item != null &&
-						FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(getRegistryName(item).toString())) {
+				} if(!flag && item != null && skip_frozen) {
 					this.setTemperature(-FROZEN_ROTTEN_THRESHOLD * 2 + EPS);
 				}
 				this.updateFoodTag();

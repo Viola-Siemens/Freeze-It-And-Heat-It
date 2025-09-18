@@ -31,7 +31,19 @@ public class ClientEventHandler {
 		ItemStack itemStack = event.getItemStack();
 		if(IFrozenRottenFood.canBeFrozenRotten(itemStack)) {
 			String foodId = getRegistryName(itemStack.getItem()).toString();
-			if(FIAHICommonConfig.NEVER_ROTTEN_FOODS.get().contains(foodId) && FIAHICommonConfig.NEVER_FROZEN_FOODS.get().contains(foodId)) {
+			Boolean skip_frozen = false;
+			Boolean skip_rotten = false;
+			for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
+				if (foodId.matches(entry)) {
+					skip_frozen = true;
+				}
+			}
+			for (String entry : FIAHICommonConfig.NEVER_ROTTEN_FOODS.get()) {
+				if (foodId.matches(entry)) {
+					skip_rotten = true;
+				}
+			}
+			if(skip_frozen && skip_rotten) {
 				return;
 			}
 			CompoundTag nbt = itemStack.getTag();

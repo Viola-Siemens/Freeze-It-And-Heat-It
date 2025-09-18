@@ -42,8 +42,8 @@ public abstract class SpriteLoaderMixin {
 					.forEach(content -> {
 						Boolean skip_frozen = false;
 						Boolean skip_rotten = false;
-						if (!content.name().getPath().matches("items?\\/")) {
-							String resource = (content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/",2)[1]);
+						if (!content.name().getPath().matches("items?/")) {
+							String resource = (content.name().getNamespace() + ":" + content.name().getPath().split("items?/",2)[1]);
 							for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
 								if (resource.matches(entry)) {
 									skip_frozen = true;
@@ -57,7 +57,7 @@ public abstract class SpriteLoaderMixin {
 								}
 							}
 							if ((content.width() > 16 || content.height() > 16) && (!skip_frozen || !skip_rotten)) {
-								System.out.println(String.format("%s is %d * %d, please consider excluding it from being frozen and/or rotten",(content.name().getNamespace() + ":" + content.name().getPath().split("items?\\/",2)[1]),content.width(),content.height()));
+								System.out.println(String.format("%s is %d * %d, please consider excluding it from being frozen and/or rotten",(content.name().getNamespace() + ":" + content.name().getPath().split("items?/",2)[1]),content.width(),content.height()));
 							}
 						}
 

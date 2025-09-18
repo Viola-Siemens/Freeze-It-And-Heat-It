@@ -46,7 +46,6 @@ public abstract class ModelBakeryMixin {
 			Boolean skip_rotten = false;
 			if (!spriteId.getPath().matches("^$")) {
 				String resource = (spriteId.getNamespace() + ":" + spriteId.getPath());
-				System.out.println("BBB " + resource);
 				for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
 					if (resource.matches(entry)) {
 						skip_frozen = true;
