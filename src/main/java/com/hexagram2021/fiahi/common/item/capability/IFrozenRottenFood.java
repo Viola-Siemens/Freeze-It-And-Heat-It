@@ -64,7 +64,7 @@ public interface IFrozenRottenFood {
 				}
 				if(flag && item != null && skip_rotten) {
 					this.setTemperature(FROZEN_ROTTEN_THRESHOLD * 2 - EPS);
-				} if(!flag && item != null && skip_frozen) {
+				} else if(!flag && item != null && skip_frozen) {
 					this.setTemperature(-FROZEN_ROTTEN_THRESHOLD * 2 + EPS);
 				}
 				this.updateFoodTag();
