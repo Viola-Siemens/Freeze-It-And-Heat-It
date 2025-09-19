@@ -42,7 +42,7 @@ public abstract class SpriteLoaderMixin {
 					.forEach(content -> {
 						Boolean skip_frozen = false;
 						Boolean skip_rotten = false;
-						if (!content.name().getPath().matches("items?/")) {
+						if (!content.name().getPath().matches("items?\\/")) {
 							String resource = (content.name().getNamespace() + ":" + content.name().getPath().split("items?/",2)[1]);
 							for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
 								if (resource.matches(entry)) {
