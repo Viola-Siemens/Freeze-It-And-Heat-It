@@ -11,6 +11,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.phys.Vec3;
 
 public class ScreenManager {
 	private static int retry = 5;
@@ -54,11 +55,14 @@ public class ScreenManager {
 			float deltaX = -Mth.sin(yRot) * cosXRot;
 			float deltaY = -Mth.sin(xRot);
 			float deltaZ = Mth.cos(yRot) * cosXRot;
+			Vec3 deltaMovement = player.getDeltaMovement();
 			for(int ignored = 0; ignored < 4; ++ignored) {
 				player.level().addParticle(
 						FIAHIParticleTypes.BREATHE_OUT.get(),
 						player.getX() + deltaX * 0.5F, player.getY() + player.getEyeHeight() - 0.2D + deltaY * 0.5F, player.getZ() + deltaZ * 0.5F,
-						deltaX * 0.15F + 0.05F * random.nextFloat(), 0.025F, deltaZ * 0.15F + 0.05F * random.nextFloat()
+						deltaX * 0.15F + 0.05F * random.nextFloat() + 0.8F * deltaMovement.x,
+						0.025F + 0.8F * deltaMovement.y,
+						deltaZ * 0.15F + 0.05F * random.nextFloat() + 0.8F * deltaMovement.z
 				);
 			}
 		}

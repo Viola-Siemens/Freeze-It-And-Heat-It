@@ -17,6 +17,7 @@
     "LWL"
   ],
   "result": {
-    "item": "fiahi:food_pouch"
+    "id": "fiahi:food_pouch",
+    "count": 1
   }
 }

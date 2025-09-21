@@ -14,5 +14,7 @@ public final class FIAHIContent {
 		FIAHIMenuTypes.init(bus);
 		FIAHIMobEffects.init(bus);
 		FIAHIParticleTypes.init(bus);
+		FIAHIRecipes.init(bus);
+		FIAHIRecipeSerializers.init(bus);
 	}
 }

@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.145'
+    id 'net.neoforged.gradle.userdev' version '7.0.192'
 }
 
 version = mod_version
@@ -69,7 +69,7 @@ repositories {
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
-    compileOnly("curse.maven:cold_sweat-506194:${cold_sweat_file_number}")
+    implementation("curse.maven:cold_sweat-506194:${cold_sweat_file_number}")
 }
 
 tasks.withType(ProcessResources).configureEach {

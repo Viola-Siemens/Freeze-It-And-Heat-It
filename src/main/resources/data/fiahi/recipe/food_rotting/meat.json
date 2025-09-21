@@ -1,0 +1,10 @@
+{
+  "type": "fiahi:food_rotting",
+  "ingredient": {
+    "tag": "minecraft:meat"
+  },
+  "result": {
+    "id": "fiahi:leftover_meat",
+    "count": 1
+  }
+}

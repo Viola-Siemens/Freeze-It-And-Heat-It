@@ -1,18 +1,24 @@
 package com.hexagram2021.fiahi.common.item.capability;
 
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
+import com.hexagram2021.fiahi.common.recipe.FoodRottingRecipe;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
+import com.hexagram2021.fiahi.register.FIAHIRecipes;
 import com.momosoftworks.coldsweat.config.ConfigSettings;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 
 import javax.annotation.Nullable;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.ToDoubleFunction;
 
@@ -101,14 +107,37 @@ public interface IFrozenRottenFood {
 		return itemStack.has(DataComponents.FOOD) && !itemStack.is(LEFTOVERS);
 	}
 
-	static void tick(ItemStack food, Consumer<ItemStack> leftOverSetter, ToDoubleFunction<IFrozenRottenFood> temperatureUpdater, @Nullable LivingEntity entity) {
+	@SuppressWarnings("deprecation")
+	static boolean canBeFrozenRotten(Item item) {
+		return item.components().has(DataComponents.FOOD) && !item.builtInRegistryHolder().is(LEFTOVERS);
+	}
+
+	static void tick(ItemStack food, Consumer<ItemStack> leftOverSetter, ToDoubleFunction<IFrozenRottenFood> temperatureUpdater, ServerLevel serverLevel, @Nullable LivingEntity entity) {
 		IFrozenRottenFood c = food.getCapability(FIAHICapabilities.FOOD_CAPABILITY);
 		if(c != null) {
 			c.foodTick(temperatureUpdater.applyAsDouble(c), food.getItem());
 			if(c.getTemperature() > 120) {
-				FoodProperties foodProperties = food.getFoodProperties(entity);
-				if(foodProperties != null) {
-					leftOverSetter.accept(new ItemStack(food.is(ItemTags.MEAT) ? FIAHIItems.LEFTOVER_MEAT : FIAHIItems.LEFTOVER_VEGETABLE, food.getCount()));
+				Optional<RecipeHolder<FoodRottingRecipe>> holder = serverLevel.getRecipeManager().getRecipeFor(FIAHIRecipes.FOOD_ROTTING.get(), new SingleRecipeInput(food), serverLevel);
+				if(holder.isPresent()) {
+					FoodRottingRecipe recipe = holder.get().value();
+					leftOverSetter.accept(recipe.assemble(new SingleRecipeInput(food), serverLevel.registryAccess()));
+					if(entity instanceof Player player) {
+						for(FoodRottingRecipe.RandomResult result: recipe.randomResults()) {
+							if(serverLevel.random.nextDouble() < result.possibility()) {
+								ItemStack itemStack = result.result().copy();
+								itemStack.setCount(food.getCount());
+								if (!player.addItem(result.result())) {
+									ItemEntity itementity = player.drop(itemStack, false);
+									if (itementity != null) {
+										itementity.setNoPickUpDelay();
+										itementity.setTarget(player.getUUID());
+									}
+								}
+							}
+						}
+					}
+				} else {
+					leftOverSetter.accept(new ItemStack(FIAHIItems.LEFTOVER_VEGETABLE));
 				}
 			}
 		}

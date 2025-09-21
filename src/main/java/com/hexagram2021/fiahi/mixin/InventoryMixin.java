@@ -4,6 +4,7 @@ import com.hexagram2021.fiahi.common.ForgeEventHandler;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
 import com.momosoftworks.coldsweat.api.util.Temperature;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -28,14 +29,14 @@ public class InventoryMixin {
 	@Inject(method = "tick", at = @At(value = "TAIL"))
 	public void fiahi$convertFoodIntoLeftoverIfFullyRotten(CallbackInfo ci) {
 		Level level = this.player.level();
-		for(NonNullList<ItemStack> itemStackList : this.compartments) {
-			for(int i = 0; i < itemStackList.size(); ++i) {
-				if (!itemStackList.get(i).isEmpty()) {
-					ItemStack food = itemStackList.get(i);
-					if(!level.isClientSide && ForgeEventHandler.isAvailableToTickFood()) {
+		if(level instanceof ServerLevel serverLevel && ForgeEventHandler.isAvailableToTickFood()) {
+			for (NonNullList<ItemStack> itemStackList : this.compartments) {
+				for (int i = 0; i < itemStackList.size(); ++i) {
+					if (!itemStackList.get(i).isEmpty()) {
+						ItemStack food = itemStackList.get(i);
 						double temp = Temperature.get(this.player, Temperature.Trait.CORE);
 						int finalI = i;
-						IFrozenRottenFood.tick(food, itemStack -> itemStackList.set(finalI, itemStack), c -> (temp + 2.0D * c.getTemperature()) / 3.0D, this.player);
+						IFrozenRottenFood.tick(food, itemStack -> itemStackList.set(finalI, itemStack), c -> (temp + 2.0D * c.getTemperature()) / 3.0D, serverLevel, this.player);
 					}
 				}
 			}

@@ -41,10 +41,9 @@ public class FrozenRottenFood implements IFrozenRottenFood {
 			if(temperature == 0) {
 				return;
 			}
-			attachment = 0;
 		}
 
-		this.self.set(FIAHIAttachmentTypes.FOOD_TEMPERATURE.get(), attachment);
+		this.self.set(FIAHIAttachmentTypes.FOOD_TEMPERATURE, temperature);
 	}
 
 	public void syncFoodTag() {

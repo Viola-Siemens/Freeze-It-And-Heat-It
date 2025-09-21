@@ -1,7 +1,7 @@
 package com.hexagram2021.fiahi.register;
 
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
-import com.hexagram2021.fiahi.common.item.capability.impl.FrozenRottenFood;
+import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenItemStack;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +22,7 @@ public class FIAHICapabilities {
 	public static void register(RegisterCapabilitiesEvent event) {
 		event.registerItem(
 				FOOD_CAPABILITY,
-				(itemStack, ignored) -> new FrozenRottenFood(itemStack),
+				(itemStack, ignored) -> ((IFrozenRottenItemStack)(Object)itemStack).fiahi$getFrozenRottenFood(),
 				BuiltInRegistries.ITEM.stream().filter(item -> item.components().has(DataComponents.FOOD)).toArray(ItemLike[]::new)
 		);
 	}

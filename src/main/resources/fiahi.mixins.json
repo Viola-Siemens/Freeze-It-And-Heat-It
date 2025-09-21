@@ -6,6 +6,7 @@
   "mixins": [
     "InventoryMixin",
     "ItemEntityMixin",
+    "ItemStackMixin",
     "LivingEntityMixin",
     "cold_sweat.BoilerBlockEntityMixin",
     "cold_sweat.BoilerContainerSlotMixin",

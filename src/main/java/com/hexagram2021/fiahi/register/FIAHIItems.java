@@ -2,6 +2,7 @@ package com.hexagram2021.fiahi.register;
 
 import com.google.common.collect.Lists;
 import com.hexagram2021.fiahi.common.item.FoodPouchItem;
+import com.hexagram2021.fiahi.common.item.capability.impl.FoodPouchData;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
@@ -14,10 +15,11 @@ import java.util.function.Supplier;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
 
+@SuppressWarnings("unused")
 public class FIAHIItems {
 	private static final DeferredRegister<Item> REGISTER = DeferredRegister.create(Registries.ITEM, MODID);
 
-	public static final ItemEntry<FoodPouchItem> FOOD_POUCH = ItemEntry.register("food_pouch", () -> new FoodPouchItem(new Item.Properties().stacksTo(1)));
+	public static final ItemEntry<FoodPouchItem> FOOD_POUCH = ItemEntry.register("food_pouch", () -> new FoodPouchItem(new Item.Properties().stacksTo(1).component(FIAHIAttachmentTypes.FOOD_POUCH_DATA.get(), FoodPouchData.EMPTY)));
 
 	public static final ItemEntry<Item> LEFTOVER_MEAT = ItemEntry.register("leftover_meat", () -> new Item(new Item.Properties().food(FIAHIFoods.LEFTOVER_MEAT)));
 	public static final ItemEntry<Item> LEFTOVER_VEGETABLE = ItemEntry.register("leftover_vegetable", () -> new Item(new Item.Properties().food(FIAHIFoods.LEFTOVER_VEGETABLE)));

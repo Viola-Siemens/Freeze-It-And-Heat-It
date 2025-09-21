@@ -1,0 +1,10 @@
+{
+  "values": {
+    "fiahi:leftover_meat": {
+      "chance": 0.65
+    },
+    "fiahi:leftover_vegetable": {
+      "chance": 0.65
+    }
+  }
+}
