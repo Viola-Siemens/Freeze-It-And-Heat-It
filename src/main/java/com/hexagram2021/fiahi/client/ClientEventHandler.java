@@ -36,11 +36,13 @@ public class ClientEventHandler {
 			for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
 				if (foodId.matches(entry)) {
 					skip_frozen = true;
+					break;
 				}
 			}
 			for (String entry : FIAHICommonConfig.NEVER_ROTTEN_FOODS.get()) {
 				if (foodId.matches(entry)) {
 					skip_rotten = true;
+					break;
 				}
 			}
 			if(skip_frozen && skip_rotten) {

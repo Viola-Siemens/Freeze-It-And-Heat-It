@@ -55,11 +55,13 @@ public interface IFrozenRottenFood {
 				for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
 					if (item_name.matches(entry)) {
 						skip_frozen = true;
+						break;
 					}
 				}
 				for (String entry : FIAHICommonConfig.NEVER_ROTTEN_FOODS.get()) {
 					if (item_name.matches(entry)) {
 						skip_rotten = true;
+						break;
 					}
 				}
 				if(flag && item != null && skip_rotten) {

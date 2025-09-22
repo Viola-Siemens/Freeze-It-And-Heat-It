@@ -47,13 +47,13 @@ public abstract class SpriteLoaderMixin {
 							for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
 								if (resource.matches(entry)) {
 									skip_frozen = true;
-									System.out.println("skip_frozen " + content.name());
+									break;
 								}
 							}
 							for (String entry : FIAHICommonConfig.NEVER_ROTTEN_FOODS.get()) {
 								if (resource.matches(entry)) {
 									skip_rotten = true;
-									System.out.println("skip_rotten " + content.name());
+									break;
 								}
 							}
 							if ((content.width() > 16 || content.height() > 16) && (!skip_frozen || !skip_rotten)) {

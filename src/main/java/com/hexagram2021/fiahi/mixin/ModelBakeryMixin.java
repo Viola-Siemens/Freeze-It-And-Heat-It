@@ -49,11 +49,13 @@ public abstract class ModelBakeryMixin {
 				for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
 					if (resource.matches(entry)) {
 						skip_frozen = true;
+						break;
 					}
 				}
 				for (String entry : FIAHICommonConfig.NEVER_ROTTEN_FOODS.get()) {
 					if (resource.matches(entry)) {
 						skip_rotten = true;
+						break;
 					}
 				}
 			}
