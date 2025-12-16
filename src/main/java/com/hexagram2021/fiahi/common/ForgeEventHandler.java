@@ -6,8 +6,10 @@ import com.hexagram2021.fiahi.common.handler.ItemStackFoodHandler;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
 import com.momosoftworks.coldsweat.util.world.WorldHelper;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +29,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ConcurrentModificationException;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
@@ -68,29 +71,34 @@ public final class ForgeEventHandler {
 			serverLevel.getChunkSource().chunkMap.getChunks().forEach(chunk -> {
 				LevelChunk levelChunk = chunk.getFullChunk();
 				if(levelChunk != null && !levelChunk.isEmpty()) {
-					try {
-						levelChunk.getBlockEntities().forEach((blockPos, blockEntity) -> {
-							ResourceLocation beId = ForgeRegistries.BLOCK_ENTITIES.getKey(blockEntity.getType());
-							if (blockEntity.hasLevel() && blockEntity instanceof Container container &&
-									beId != null && !FIAHICommonConfig.STABLE_TEMPERATURE_CONTAINERS.get().contains(beId.toString())) {
-								if (container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
-									return;
-								}
-								tickContainer(blockEntity, container, blockPos, container.getContainerSize(), Container::getItem, Container::setItem);
-							} else {
-								blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
-									if (itemHandler instanceof IItemHandlerModifiable itemHandlerModifiable) {
-										tickContainer(blockEntity, itemHandlerModifiable, blockPos, itemHandlerModifiable.getSlots(), IItemHandlerModifiable::getStackInSlot, IItemHandlerModifiable::setStackInSlot);
-									}
-								});
+					Map<BlockPos, BlockEntity> blockEntities = getBlockPosBlockEntityMap(chunk, levelChunk);
+					blockEntities.forEach((blockPos, blockEntity) -> {
+						ResourceLocation beId = ForgeRegistries.BLOCK_ENTITIES.getKey(blockEntity.getType());
+						if (blockEntity.hasLevel() && blockEntity instanceof Container container &&
+								beId != null && !FIAHICommonConfig.STABLE_TEMPERATURE_CONTAINERS.get().contains(beId.toString())) {
+							if (container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
+								return;
 							}
-						});
-					} catch (ConcurrentModificationException cme) {
-						ChunkPos pos = chunk.getPos();
-						throw new RuntimeException("Block entities of chunk (%d, %d) has been concurrently modified during iterating. This is NOT a bug of FIAHI. See https://github.com/Viola-Siemens/Freeze-It-And-Heat-It/issues/25 to get more information.".formatted(pos.x, pos.z), cme);
-					}
+							tickContainer(blockEntity, container, blockPos, container.getContainerSize(), Container::getItem, Container::setItem);
+						} else {
+							blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
+								if (itemHandler instanceof IItemHandlerModifiable itemHandlerModifiable) {
+									tickContainer(blockEntity, itemHandlerModifiable, blockPos, itemHandlerModifiable.getSlots(), IItemHandlerModifiable::getStackInSlot, IItemHandlerModifiable::setStackInSlot);
+								}
+							});
+						}
+					});
 				}
 			});
+		}
+	}
+
+	private static Map<BlockPos, BlockEntity> getBlockPosBlockEntityMap(ChunkHolder chunk, LevelChunk levelChunk) {
+		try {
+			return new Object2ObjectOpenHashMap<>(levelChunk.getBlockEntities());
+		} catch (ConcurrentModificationException cme) {
+			ChunkPos pos = chunk.getPos();
+			throw new RuntimeException("Block entities of chunk (%d, %d) has been concurrently modified during iterating. This is NOT a bug of FIAHI. See https://github.com/Viola-Siemens/Freeze-It-And-Heat-It/issues/25 to get more information.".formatted(pos.x, pos.z), cme);
 		}
 	}
 
