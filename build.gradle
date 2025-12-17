@@ -17,7 +17,7 @@ plugins {
 }
 apply plugin: 'org.spongepowered.mixin'
 
-version = '2.2.8'
+version = project.mod_version
 group = 'com.hexagram2021.fiahi'
 archivesBaseName = 'fiahi'
 
