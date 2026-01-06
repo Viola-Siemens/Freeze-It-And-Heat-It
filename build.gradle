@@ -19,7 +19,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '3.1.4'
+version = project.mod_version
 group = 'com.hexagram2021.fiahi'
 base {
     archivesName = 'fiahi'
