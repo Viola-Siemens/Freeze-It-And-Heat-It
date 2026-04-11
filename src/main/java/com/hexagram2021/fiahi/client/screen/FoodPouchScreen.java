@@ -14,7 +14,6 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
 
@@ -46,7 +45,6 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 
 	@Override
 	protected void renderBg(GuiGraphics transform, float partialTicks, int mouseX, int mouseY) {
-		this.renderBackground(transform, mouseX, mouseY, partialTicks);
 		int x = this.leftPos;
 		int y = this.topPos;
 		transform.blit(BG_LOCATION, x, y, 0, 0, this.imageWidth, this.imageHeight);
@@ -110,8 +108,8 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 			int buttonX = this.leftPos + FOOD_X;
 			int buttonY = this.topPos + FOOD_Y;
 			for(int i = 0; i < this.stackedItems.size(); ++i) {
-				double deltaX = x - (double)(buttonX + i * FOOD_IMAGE_SIZE_WIDTH);
-				double deltaY = y - (double)buttonY;
+				double deltaX = x - (buttonX + i * FOOD_IMAGE_SIZE_WIDTH);
+				double deltaY = y - buttonY;
 				if (deltaX >= 0.0D && deltaY >= 0.0D && deltaX < FOOD_IMAGE_SIZE_WIDTH && deltaY < FOOD_IMAGE_SIZE_HEIGHT &&
 						this.menu.clickMenuButton(Objects.requireNonNull(Objects.requireNonNull(this.minecraft).player), i)) {
 					Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
@@ -124,6 +122,6 @@ public class FoodPouchScreen extends AbstractContainerScreen<FoodPouchMenu> {
 	}
 
 	public void containerChanged() {
-		this.stackedItems = this.menu.getStackedItems().stream().map(key -> new ItemStack(key.item())).collect(Collectors.toList());
+		this.stackedItems = this.menu.getStackedItems().stream().map(key -> new ItemStack(key.item())).toList();
 	}
 }
