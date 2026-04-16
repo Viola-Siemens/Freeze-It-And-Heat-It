@@ -71,17 +71,22 @@ public final class ForgeEventHandler {
 					Map<BlockPos, BlockEntity> blockEntities = getBlockPosBlockEntityMap(chunk, levelChunk);
 					blockEntities.forEach((blockPos, blockEntity) -> {
 						ResourceLocation beId = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntity.getType());
-						if (blockEntity.hasLevel() && blockEntity instanceof Container container &&
-								beId != null && !FIAHICommonConfig.STABLE_TEMPERATURE_CONTAINERS.get().contains(beId.toString())) {
-							if(container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
-								return;
+						try {
+							if (blockEntity.hasLevel() && blockEntity instanceof Container container &&
+									beId != null && !FIAHICommonConfig.STABLE_TEMPERATURE_CONTAINERS.get().contains(beId.toString())) {
+								if(container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
+									return;
+								}
+								tickContainer(blockEntity, container, blockPos, container.getContainerSize(), Container::getItem, Container::setItem, serverLevel);
+							} else {
+								IItemHandler itemHandler = serverLevel.getCapability(Capabilities.ItemHandler.BLOCK, blockPos, blockEntity.getBlockState(), blockEntity, Direction.UP);
+								if(itemHandler instanceof IItemHandlerModifiable itemHandlerModifiable) {
+									tickContainer(blockEntity, itemHandlerModifiable, blockPos, itemHandlerModifiable.getSlots(), IItemHandlerModifiable::getStackInSlot, IItemHandlerModifiable::setStackInSlot, serverLevel);
+								}
 							}
-							tickContainer(blockEntity, container, blockPos, container.getContainerSize(), Container::getItem, Container::setItem, serverLevel);
-						} else {
-							IItemHandler itemHandler = serverLevel.getCapability(Capabilities.ItemHandler.BLOCK, blockPos, blockEntity.getBlockState(), blockEntity, Direction.UP);
-							if(itemHandler instanceof IItemHandlerModifiable itemHandlerModifiable) {
-								tickContainer(blockEntity, itemHandlerModifiable, blockPos, itemHandlerModifiable.getSlots(), IItemHandlerModifiable::getStackInSlot, IItemHandlerModifiable::setStackInSlot, serverLevel);
-							}
+						} catch(RuntimeException re) {
+							ChunkPos pos = chunk.getPos();
+							throw new RuntimeException("Block entity %s of chunk (%d, %d) causes the crashed due to inconsistent size data. This is NOT a bug of FIAHI.".formatted(beId, pos.x, pos.z), re);
 						}
 					});
 				}
