@@ -1,5 +1,6 @@
 package com.hexagram2021.fiahi.mixin;
 
+import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.client.model.FIAHIBakedModel;
 import com.hexagram2021.fiahi.client.model.FIAHIModelBaker;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -41,15 +42,32 @@ public abstract class ModelBakeryMixin {
 					spriteGetter.apply(spriteId, material) : sprite;
 		};
 		this.topLevelModels.forEach(((spriteId, unbakedModel) -> {
+			Boolean skip_frozen = false;
+			Boolean skip_rotten = false;
+			if (!spriteId.getPath().matches("^$")) {
+				String resource = (spriteId.getNamespace() + ":" + spriteId.getPath());
+				for (String entry : FIAHICommonConfig.NEVER_FROZEN_FOODS.get()) {
+					if (resource.matches(entry)) {
+						skip_frozen = true;
+						break;
+					}
+				}
+				for (String entry : FIAHICommonConfig.NEVER_ROTTEN_FOODS.get()) {
+					if (resource.matches(entry)) {
+						skip_rotten = true;
+						break;
+					}
+				}
+			}
 			if (unbakedModel instanceof BlockModel && ((BlockModel) unbakedModel).getRootModel() == ModelBakery.GENERATION_MARKER) {
 				this.fiahi$putBakedModel(
 						spriteId,
-						this.fiahi$bakeModel(spriteMapper, ".frozen.1", spriteId),
-						this.fiahi$bakeModel(spriteMapper, ".frozen.2", spriteId),
-						this.fiahi$bakeModel(spriteMapper, ".frozen.3", spriteId),
-						this.fiahi$bakeModel(spriteMapper, ".rotten.1", spriteId),
-						this.fiahi$bakeModel(spriteMapper, ".rotten.2", spriteId),
-						this.fiahi$bakeModel(spriteMapper, ".rotten.3", spriteId)
+						this.fiahi$bakeModel(spriteMapper, skip_frozen ? "" : ".frozen.1", spriteId),
+						this.fiahi$bakeModel(spriteMapper, skip_frozen ? "" : ".frozen.2", spriteId),
+						this.fiahi$bakeModel(spriteMapper, skip_frozen ? "" : ".frozen.3", spriteId),
+						this.fiahi$bakeModel(spriteMapper, skip_rotten ? "" : ".rotten.1", spriteId),
+						this.fiahi$bakeModel(spriteMapper, skip_rotten ? "" : ".rotten.2", spriteId),
+						this.fiahi$bakeModel(spriteMapper, skip_rotten ? "" : ".rotten.3", spriteId)
 				);
 			}
 		}));

@@ -30,7 +30,7 @@ public final class FIAHICommonConfig {
 			NEVER_FROZEN_FOODS = BUILDER.comment("Which foods will never be frozen.")
 					.defineList("NEVER_FROZEN_FOODS", List.of(
 							new ResourceLocation("dried_kelp").toString()
-					), o -> o instanceof String str && ResourceLocation.isValidResourceLocation(str));
+					), o -> o instanceof String str && (ResourceLocation.isValidResourceLocation(str) || str.matches("\\(.*\\)")));
 			NEVER_ROTTEN_FOODS = BUILDER.comment("Which foods will never be rotten.")
 					.defineList("NEVER_ROTTEN_FOODS", List.of(
 							new ResourceLocation("golden_apple").toString(),
@@ -39,7 +39,7 @@ public final class FIAHICommonConfig {
 							new ResourceLocation("emeraldcraft", "golden_peach").toString(),
 							new ResourceLocation("emeraldcraft", "agate_apple").toString(),
 							new ResourceLocation("emeraldcraft", "jade_apple").toString()
-					), o -> o instanceof String str && ResourceLocation.isValidResourceLocation(str));
+					), o -> o instanceof String str && (ResourceLocation.isValidResourceLocation(str) || str.matches("\\(.*\\)")));
 			ENABLE_FROZEN = BUILDER.comment("If false, foods will never be frozen.")
 					.define("ENABLE_FROZEN", true);
 			ENABLE_ROTTEN = BUILDER.comment("If false, foods will never be rotten.")
