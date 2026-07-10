@@ -1,9 +1,11 @@
 package com.hexagram2021.fiahi.mixin;
 
+import com.hexagram2021.fiahi.common.event.ApplySpecialEatEffectEvent;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIMobEffects;
 import com.momosoftworks.coldsweat.api.util.Temperature;
+import net.neoforged.neoforge.common.NeoForge;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,16 +24,26 @@ public class LivingEntityMixin {
 		LivingEntity entity = (LivingEntity)(Object)this;
 		IFrozenRottenFood c = itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY);
 		if(c != null) {
-			if(c.getFrozenLevel() > 0) {
-				entity.addEffect(new MobEffectInstance(FIAHIMobEffects.SHIVER, c.getFrozenLevel() * 200, c.getFrozenLevel() - 1));
-				entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, c.getFrozenLevel() * 400, c.getFrozenLevel() - 1));
-				entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, c.getFrozenLevel() * 400, c.getFrozenLevel() - 1));
-				Temperature.add(entity, Temperature.Trait.CORE, -c.getFrozenLevel() * 5);
-			}
-			if(c.getRottenLevel() > 0) {
-				entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, c.getRottenLevel() * 200, c.getRottenLevel() - 1));
-				entity.addEffect(new MobEffectInstance(MobEffects.HUNGER, c.getRottenLevel() * 200, c.getRottenLevel() - 1));
-				Temperature.add(entity, Temperature.Trait.CORE, c.getRottenLevel() * 5);
+			// 发布事件喵~
+			ApplySpecialEatEffectEvent event = new ApplySpecialEatEffectEvent(entity, itemStack, c);
+			NeoForge.EVENT_BUS.post(event);
+
+			// 如果事件未取消，应用原有效果喵~
+			if(!event.isCancelled()) {
+				if(c.getFrozenLevel() > 0) {
+					entity.addEffect(new MobEffectInstance(FIAHIMobEffects.SHIVER, c.getFrozenLevel() * 200, c.getFrozenLevel() - 1));
+					entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, c.getFrozenLevel() * 400, c.getFrozenLevel() - 1));
+					entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, c.getFrozenLevel() * 400, c.getFrozenLevel() - 1));
+					Temperature.add(entity, Temperature.Trait.CORE, -c.getFrozenLevel() * 5);
+				}
+				if(c.getRottenLevel() > 0) {
+					entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, c.getRottenLevel() * 200, c.getRottenLevel() - 1));
+					entity.addEffect(new MobEffectInstance(MobEffects.HUNGER, c.getRottenLevel() * 200, c.getRottenLevel() - 1));
+					Temperature.add(entity, Temperature.Trait.CORE, c.getRottenLevel() * 5);
+				}
+
+				// 执行附属模组的回调喵~
+				event.executeCallbacks();
 			}
 		}
 	}
