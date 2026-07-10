@@ -31,3 +31,10 @@ issueTrackerURL="https://github.com/Viola-Siemens/Freeze-It-And-Heat-It/issues"
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="cold_sweat"
+    type="required"
+    versionRange="[2.3, 3)"
+    ordering="NONE"
+    side="BOTH"
