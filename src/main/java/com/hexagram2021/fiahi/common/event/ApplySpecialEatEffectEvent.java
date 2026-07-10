@@ -114,7 +114,7 @@ public class ApplySpecialEatEffectEvent extends Event implements ICancellableEve
 	 * @author liudongyu
 	 */
 	@FunctionalInterface
-	public interface EffectCallback extends BiConsumer<LivingEntity, IFrozenRottenFood> {
+	public interface EffectCallback {
 		/**
 		 * 应用自定义效果喵~
 		 *
@@ -122,10 +122,5 @@ public class ApplySpecialEatEffectEvent extends Event implements ICancellableEve
 		 * @param foodData 物品的冷冻腐败数据喵~
 		 */
 		void apply(LivingEntity entity, IFrozenRottenFood foodData);
-
-		@Override
-		default void accept(LivingEntity livingEntity, IFrozenRottenFood foodData) {
-			this.apply(livingEntity, foodData);
-		}
 	}
 }
