@@ -65,6 +65,9 @@ repositories {
         name = "ParchmentMC"
         url = "https://maven.parchmentmc.org/"
     }
+    flatDir {
+        dirs "libs"
+    }
 }
 
 dependencies {

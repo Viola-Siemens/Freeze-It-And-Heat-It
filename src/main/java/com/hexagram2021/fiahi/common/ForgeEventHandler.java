@@ -1,14 +1,16 @@
 package com.hexagram2021.fiahi.common;
 
+import com.google.common.collect.Lists;
 import com.hexagram2021.fiahi.client.ScreenManager;
 import com.hexagram2021.fiahi.common.config.FIAHICommonConfig;
 import com.hexagram2021.fiahi.common.item.capability.IFrozenRottenFood;
 import com.hexagram2021.fiahi.register.FIAHIAttachmentTypes;
 import com.momosoftworks.coldsweat.util.world.WorldHelper;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerLevel;
@@ -29,18 +31,40 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.hexagram2021.fiahi.FreezeItAndHeatIt.MODID;
 
+/**
+ * NeoForge 模组事件监听处理器
+ *
+ * @author liudongyu
+ */
 @EventBusSubscriber(modid = MODID)
 public final class ForgeEventHandler {
-	private static int tickAfterCheck = 0;
+	// Number of ticks elapsed since the last food-temperature check, tracked per dimension.
+	// Throttles every dimension independently so the Nether/End no longer run every tick.
+	private static final Object2IntMap<ResourceKey<Level>> tickAfterCheck = new Object2IntOpenHashMap<>();
 
-	private ForgeEventHandler() {}
+	private ForgeEventHandler() {
+	}
 
+	/**
+	 * 当前 tick 是否被允许修改食物温度 - 性能优化
+	 * @param dimension 维度 key
+	 * @return true：允许修改温度；false：跳过当前刻
+	 */
+	public static boolean isAvailableToTickFood(ResourceKey<Level> dimension) {
+		return tickAfterCheck.getOrDefault(dimension, 0) == 0;
+	}
+
+	/**
+	 * 玩家 tick 事件处理器：仅客户端增加一段逻辑，让寒冷的玩家呼吸产生粒子
+	 * @param event 玩家 tick 事件
+	 */
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();
@@ -50,45 +74,83 @@ public final class ForgeEventHandler {
 		}
 	}
 
+	/**
+	 * 修改所有食物的物品堆叠组件，加入温度数据
+	 * @param event 修改默认组件事件
+	 */
 	@SubscribeEvent
 	public static void modifyDefaultComponent(ModifyDefaultComponentsEvent event) {
 		event.modifyMatching(IFrozenRottenFood::canBeFrozenRotten, builder -> builder.set(FIAHIAttachmentTypes.FOOD_TEMPERATURE.get(), 0));
 	}
 
+	/**
+	 * 世界 tick 事件处理器：服务端每 tick 触发，满足条件后更新当前世界所有已加载区块中所有方块实体中食物的温度
+	 * @param event 世界 tick 事件
+	 */
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
 		if(event.getLevel() instanceof ServerLevel serverLevel) {
-			if(serverLevel.dimension().equals(Level.OVERWORLD)) {
-				if(tickAfterCheck < FIAHICommonConfig.TEMPERATURE_CHECKER_INTERVAL.get()) {
-					++tickAfterCheck;
-					return;
-				}
-				tickAfterCheck = 0;
+			ResourceKey<Level> dimension = serverLevel.dimension();
+			if(!shouldCheckTemperature(dimension)) {
+				return;
 			}
-			serverLevel.getChunkSource().chunkMap.getChunks().forEach(chunk -> {
-				LevelChunk levelChunk = chunk.getTickingChunk();
-				if(levelChunk != null && !levelChunk.isEmpty()) {
-					Map<BlockPos, BlockEntity> blockEntities = getBlockPosBlockEntityMap(chunk, levelChunk);
-					blockEntities.forEach((blockPos, blockEntity) -> {
-						ResourceLocation beId = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntity.getType());
-						try {
-							if (blockEntity.hasLevel() && blockEntity instanceof Container container &&
-									beId != null && !FIAHICommonConfig.STABLE_TEMPERATURE_CONTAINERS.get().contains(beId.toString())) {
-								if(container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
-									return;
-								}
-								tickContainer(blockEntity, container, blockPos, container.getContainerSize(), Container::getItem, Container::setItem, serverLevel);
-							} else {
-								IItemHandler itemHandler = serverLevel.getCapability(Capabilities.ItemHandler.BLOCK, blockPos, blockEntity.getBlockState(), blockEntity, Direction.UP);
-								if(itemHandler instanceof IItemHandlerModifiable itemHandlerModifiable) {
-									tickContainer(blockEntity, itemHandlerModifiable, blockPos, itemHandlerModifiable.getSlots(), IItemHandlerModifiable::getStackInSlot, IItemHandlerModifiable::setStackInSlot, serverLevel);
-								}
+			// Collect every eligible container and its position first; the temperature batch query runs once below.
+			List<FoodContainer> containers = Lists.newArrayList();
+			List<BlockPos> containerPositions = Lists.newArrayList();
+			serverLevel.getChunkSource().chunkMap.getChunks().forEach(
+					chunk -> collectContainerPositionsByChunk(serverLevel, chunk, containerPositions, containers)
+			);
+
+			if(containerPositions.isEmpty()) {
+				return;
+			}
+			// 一次粗精度批查询（8 格分段缓存），绝大多数 tick 只是分段缓存命中，过期分段自然错峰重算喵~
+			Object2DoubleMap<BlockPos> temperatures = getRoughTemperaturesAt(serverLevel, containerPositions);
+			for(FoodContainer container : containers) {
+				tickFood(container, temperatures.getDouble(container.blockPos()), serverLevel);
+			}
+		}
+	}
+
+	private static Object2DoubleMap<BlockPos> getRoughTemperaturesAt(Level level, Collection<BlockPos> positions) {
+		Object2DoubleMap<BlockPos> result = new Object2DoubleOpenHashMap<>();
+		for (BlockPos pos : positions) {
+			result.put(pos, WorldHelper.getRoughTemperatureAt(level, pos, 0));
+		}
+		return result;
+	}
+
+	private static void collectContainerPositionsByChunk(ServerLevel serverLevel, ChunkHolder chunk,
+														 List<BlockPos> containerPositions, List<FoodContainer> containers) {
+		LevelChunk levelChunk = chunk.getTickingChunk();
+		if(levelChunk != null && !levelChunk.isEmpty()) {
+			// CoI 策略防并发修改
+			Map<BlockPos, BlockEntity> blockEntities = getBlockPosBlockEntityMap(chunk, levelChunk);
+			blockEntities.forEach((blockPos, blockEntity) -> {
+				ResourceLocation beId = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntity.getType());
+				if(beId != null && !FIAHICommonConfig.STABLE_TEMPERATURE_CONTAINERS.get().contains(beId.toString())) {
+					try {
+						if (blockEntity.hasLevel() && blockEntity instanceof Container container) {
+							if (container instanceof RandomizableContainerBlockEntity lootContainer && lootContainer.lootTable != null) {
+								return;
 							}
-						} catch(RuntimeException re) {
-							ChunkPos pos = chunk.getPos();
-							throw new RuntimeException("Block entity %s of chunk (%d, %d) causes the crashed due to inconsistent size data. This is NOT a bug of FIAHI.".formatted(beId, pos.x, pos.z), re);
+							containerPositions.add(blockPos);
+							containers.add(new FoodContainer(blockPos, beId, container.getContainerSize(), container::getItem, container::setItem));
+						} else {
+							IItemHandler itemHandler = serverLevel.getCapability(Capabilities.ItemHandler.BLOCK, blockPos, blockEntity.getBlockState(), blockEntity, Direction.UP);
+							if (itemHandler instanceof IItemHandlerModifiable itemHandlerModifiable) {
+								containerPositions.add(blockPos);
+								containers.add(new FoodContainer(blockPos, beId, itemHandlerModifiable.getSlots(), itemHandlerModifiable::getStackInSlot, itemHandlerModifiable::setStackInSlot));
+							}
 						}
-					});
+					} catch (RuntimeException re) {
+						ChunkPos pos = chunk.getPos();
+						throw new IllegalStateException(
+								"Block entity %s at (%d, %d, %d) of chunk (%d, %d) causes the crashed due to inconsistent size data. This is NOT a bug of FIAHI."
+										.formatted(beId, blockPos.getX(), blockPos.getY(), blockPos.getZ(), pos.x, pos.z),
+								re
+						);
+					}
 				}
 			});
 		}
@@ -99,27 +161,41 @@ public final class ForgeEventHandler {
 			return new Object2ObjectOpenHashMap<>(levelChunk.getBlockEntities());
 		} catch (ConcurrentModificationException cme) {
 			ChunkPos pos = chunk.getPos();
-			throw new RuntimeException("Block entities of chunk (%d, %d) has been concurrently modified during iterating. This is NOT a bug of FIAHI. See https://github.com/Viola-Siemens/Freeze-It-And-Heat-It/issues/25 to get more information.".formatted(pos.x, pos.z), cme);
+			throw new IllegalStateException("Block entities of chunk (%d, %d) has been concurrently modified during iterating. This is NOT a bug of FIAHI. See https://github.com/Viola-Siemens/Freeze-It-And-Heat-It/issues/25 to get more information.".formatted(pos.x, pos.z), cme);
 		}
 	}
 
-	private static <T> void tickContainer(BlockEntity blockEntity, T container, BlockPos blockPos, int size, FoodGetter<T> foodGetter, FoodSetter<T> foodSetter, ServerLevel serverLevel) {
-		double temp = WorldHelper.getTemperatureAt(Objects.requireNonNull(blockEntity.getLevel()), blockPos);
-		for (int i = 0; i < size; ++i) {
-			ItemStack food = foodGetter.getFood(container, i);
-			int finalI = i;
-			IFrozenRottenFood.tick(food, itemStack -> foodSetter.setFood(container, finalI, itemStack), c -> c.getTemperature() + 2.0D * temp, serverLevel, null);
+	private static void tickFood(FoodContainer container, double temp, ServerLevel serverLevel) {
+		try {
+			for (int i = 0; i < container.size(); ++i) {
+				ItemStack food = container.foodGetter().getFood(i);
+				int finalI = i;
+				IFrozenRottenFood.tick(food, itemStack -> container.foodSetter().setFood(finalI, itemStack), c -> c.getTemperature() + 2.0D * temp, serverLevel, null);
+			}
+		} catch (RuntimeException re) {
+			BlockPos pos = container.blockPos();
+			throw new IllegalStateException(
+					"Block entity %s at (%d, %d, %d) causes the crashed due to inconsistent size data. This is NOT a bug of FIAHI.".formatted(container.beId(), pos.getX(), pos.getY(), pos.getZ()),
+					re
+			);
 		}
 	}
 
-	private interface FoodGetter<T> {
-		ItemStack getFood(T container, int index);
+	private interface FoodGetter {
+		ItemStack getFood(int index);
 	}
-	private interface FoodSetter<T> {
-		void setFood(T container, int index, ItemStack food);
+	private interface FoodSetter {
+		void setFood(int index, ItemStack food);
 	}
+	private record FoodContainer(BlockPos blockPos, ResourceLocation beId, int size, FoodGetter foodGetter, FoodSetter foodSetter) {}
 
-	public static boolean isAvailableToTickFood() {
-		return tickAfterCheck == 0;
+	private static boolean shouldCheckTemperature(ResourceKey<Level> dimension) {
+		int counter = tickAfterCheck.getOrDefault(dimension, 0);
+		if(counter < FIAHICommonConfig.TEMPERATURE_CHECKER_INTERVAL.get()) {
+			tickAfterCheck.put(dimension, counter + 1);
+			return false;
+		}
+		tickAfterCheck.put(dimension, 0);
+		return true;
 	}
 }

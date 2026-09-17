@@ -18,18 +18,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
+/**
+ * 玩家物品栏 Mixin<br/>
+ * 注入 tick 逻辑，根据玩家体温修改玩家物品栏中食物的温度
+ *
+ * @author liudongyu
+ */
 @Mixin(Inventory.class)
 public class InventoryMixin {
 	@Shadow @Final
 	private List<NonNullList<ItemStack>> compartments;
 
+	/** 所属玩家 */
 	@Shadow @Final
 	public Player player;
 
 	@Inject(method = "tick", at = @At(value = "TAIL"))
-	public void fiahi$convertFoodIntoLeftoverIfFullyRotten(CallbackInfo ci) {
+	private void fiahi$convertFoodIntoLeftoverIfFullyRotten(CallbackInfo ci) {
 		Level level = this.player.level();
-		if(level instanceof ServerLevel serverLevel && ForgeEventHandler.isAvailableToTickFood()) {
+		if(level instanceof ServerLevel serverLevel && ForgeEventHandler.isAvailableToTickFood(serverLevel.dimension())) {
 			for (NonNullList<ItemStack> itemStackList : this.compartments) {
 				for (int i = 0; i < itemStackList.size(); ++i) {
 					if (!itemStackList.get(i).isEmpty()) {
