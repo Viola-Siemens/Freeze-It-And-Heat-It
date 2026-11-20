@@ -5,6 +5,8 @@ import com.hexagram2021.fiahi.common.util.FIAHILogger;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
 
@@ -18,6 +20,11 @@ public final class PouchedFoodDataTypes {
 		@Override
 		public MapCodec<SuspiciousStewEffectsData> codec() {
 			return SuspiciousStewEffectsData.CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, SuspiciousStewEffectsData> streamCodec() {
+			return SuspiciousStewEffectsData.STREAM_CODEC;
 		}
 
 		@Override

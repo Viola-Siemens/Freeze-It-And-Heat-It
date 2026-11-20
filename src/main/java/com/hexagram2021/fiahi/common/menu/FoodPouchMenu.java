@@ -9,6 +9,8 @@ import com.hexagram2021.fiahi.register.FIAHIAttachmentTypes;
 import com.hexagram2021.fiahi.register.FIAHICapabilities;
 import com.hexagram2021.fiahi.register.FIAHIItems;
 import com.hexagram2021.fiahi.register.FIAHIMenuTypes;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,7 +23,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRottenFood {
 	public static final int INPUT_SLOT = 0;
@@ -43,7 +48,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		this.slotUpdateListener.run();
 	}
 
-	public final Container container = new SimpleContainer(1) {
+	private final Container container = new SimpleContainer(1) {
 		@Override
 		public void setChanged() {
 			super.setChanged();
@@ -51,7 +56,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 			FoodPouchMenu.this.runSlotUpdateListener();
 		}
 	};
-	final ResultContainer resultContainer = new ResultContainer() {
+	private final ResultContainer resultContainer = new ResultContainer() {
 		@Override
 		public void setChanged() {
 			super.setChanged();
@@ -60,9 +65,9 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		}
 	};
 
-	final ContainerData data = new SimpleContainerData(2);	//temperature, selectedIndex
+	private final ContainerData data = new SimpleContainerData(2);	//temperature, selectedIndex
 
-	final Map<PouchedFoodKey, Integer> stackedItems = new HashMap<>();
+	private final Object2LongMap<PouchedFoodKey> stackedItems = new Object2LongOpenHashMap<>();
 
 	List<PouchedFoodKey> items = new ArrayList<>();
 
@@ -90,23 +95,23 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 					if(FoodPouchMenu.this.stackedItems.containsKey(key) || FoodPouchMenu.this.stackedItems.size() < MAX_FOOD_TYPES) {
 						IFrozenRottenFood c = itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY);
 						if(c != null) {
-							int totalCount = FoodPouchMenu.this.stackedItems.values().stream().reduce(0, Integer::sum);
-							FoodPouchMenu.this.stackedItems.compute(key, (item, count) -> {
+							long totalCount = FoodPouchMenu.this.stackedItems.values().longStream().sum();
+							FoodPouchMenu.this.stackedItems.computeLong(key, (item, count) -> {
 								if(count == null) {
-									int newCount = itemStack.getCount();
+									long newCount = itemStack.getCount();
 									FoodPouchMenu.this.apply(
 											(totalCount * FoodPouchMenu.this.getTemperature() + c.getTemperature() * itemStack.getCount()) / (totalCount + itemStack.getCount())
 									);
 									this.set(ItemStack.EMPTY);
 									return newCount;
 								}
-								int newCount = count + itemStack.getCount();
+								long newCount = count + itemStack.getCount();
 								if(newCount > MAX_FOOD_COUNT) {
 									FoodPouchMenu.this.apply(
 											(totalCount * FoodPouchMenu.this.getTemperature() + c.getTemperature() * (MAX_FOOD_COUNT - count)) / (totalCount + MAX_FOOD_COUNT - count)
 									);
-									itemStack.shrink(MAX_FOOD_COUNT - count);
-									return MAX_FOOD_COUNT;
+									itemStack.shrink(MAX_FOOD_COUNT - count.intValue());
+									return (long)MAX_FOOD_COUNT;
 								}
 								FoodPouchMenu.this.apply(
 										(totalCount * FoodPouchMenu.this.getTemperature() + c.getTemperature() * itemStack.getCount()) / (totalCount + itemStack.getCount())
@@ -130,8 +135,8 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 			@Override
 			public void onTake(Player player, ItemStack itemStack) {
 				PouchedFoodKey key = getKeyFromItem(itemStack);
-				FoodPouchMenu.this.stackedItems.computeIfPresent(key, (item, count) -> {
-					int ret = count - itemStack.getCount();
+				FoodPouchMenu.this.stackedItems.computeLongIfPresent(key, (item, count) -> {
+					long ret = count - itemStack.getCount();
 					if(ret > 0) {
 						return ret;
 					}
@@ -158,7 +163,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 	}
 
 	@Override
-	public boolean stillValid(Player p_38874_) {
+	public boolean stillValid(Player player) {
 		return true;
 	}
 
@@ -223,7 +228,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 			return;
 		}
 		PouchedFoodKey key = this.items.get(this.getSelectedIndex());
-		int count = this.stackedItems.get(key);
+		long count = this.stackedItems.getLong(key);
 		if(count <= 0) {
 			return;
 		}
@@ -231,15 +236,15 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		if(count >= key.item().getDefaultMaxStackSize()) {
 			itemStack = new ItemStack(key.item(), key.item().getDefaultMaxStackSize());
 		} else {
-			itemStack = new ItemStack(key.item(), count);
+			itemStack = new ItemStack(key.item(), (int)count);
 		}
 		IFrozenRottenFood c = itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY);
 		if(c != null) {
 			c.setTemperature(this.getTemperature());
 			c.updateFoodTag();
 		}
-		for(IPouchedFoodData<?> data: key.datas()) {
-			data.modifyStack(itemStack);
+		for(IPouchedFoodData<?> foodData: key.datas()) {
+			foodData.modifyStack(itemStack);
 		}
 		this.resultSlot.set(itemStack);
 
@@ -251,14 +256,23 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 	}
 
 	public FoodPouchData getContent() {
-		return new FoodPouchData(this.getTemperature(), this.stackedItems.entrySet().stream().map(entry -> new ItemStack(entry.getKey().item(), entry.getValue())).toList());
+		return new FoodPouchData(
+				this.getTemperature(),
+				this.stackedItems.object2LongEntrySet().stream().map(
+						entry -> new FoodPouchData.ItemWithCount(
+								entry.getKey().item().builtInRegistryHolder(),
+								entry.getLongValue(),
+								Arrays.asList(entry.getKey().datas())
+						)
+				).toList()
+		);
 	}
 
 	public void setContent(FoodPouchData content) {
 		this.setTemperature(content.temperature());
 		this.stackedItems.clear();
-		for(ItemStack itemStack: content.items()) {
-			this.stackedItems.put(getKeyFromItem(itemStack), itemStack.getCount());
+		for(FoodPouchData.ItemWithCount entry: content.items()) {
+			this.stackedItems.put(getKeyFromItem(entry.copyWithCount(1)), entry.count());
 		}
 		this.maintainItems();
 	}
@@ -288,10 +302,12 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 
 	@Override
 	public void foodTick(double temperature, Item item) {
+		// Do nothing
 	}
 
 	@Override
 	public void updateFoodTag() {
+		// Do nothing
 	}
 
 	public int getSelectedIndex() {
@@ -306,7 +322,7 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		return this.items;
 	}
 
-	public int getItemStockCount() {
+	public long getItemStockCount() {
 		int index = this.getSelectedIndex();
 		if(index < 0 || index >= this.items.size()) {
 			return 0;
@@ -327,6 +343,11 @@ public class FoodPouchMenu extends AbstractContainerMenu implements IFrozenRotte
 		}
 	}
 
+	/**
+	 * 根据物品堆叠获取食物口袋 key
+	 * @param itemStack 物品堆叠
+	 * @return 食物口袋 key
+	 */
 	public static PouchedFoodKey getKeyFromItem(ItemStack itemStack) {
 		return IPouchedFoodData.tryLoad(itemStack);
 	}

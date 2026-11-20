@@ -33,11 +33,9 @@ public class BoilerBlockEntityMixin {
 					if (canBeFrozenRotten(itemStack)) {
 						hasItemStacks = true;
 						IFrozenRottenFood c = itemStack.getCapability(FIAHICapabilities.FOOD_CAPABILITY);
-						if(c != null) {
-							if(c.getTemperature() < IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD) {
-								c.setTemperature(c.getTemperature() + 1.0D);
-								c.updateFoodTag();
-							}
+						if(c != null && c.getTemperature() < IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD) {
+							c.setTemperature(c.getTemperature() + 1.0D);
+							c.updateFoodTag();
 						}
 					}
 				}
@@ -56,8 +54,8 @@ public class BoilerBlockEntityMixin {
 							foodPouchData = FoodPouchData.EMPTY;
 						}
 						double itemTemp = foodPouchData.temperature();
-						int itemCount = FoodPouchItem.getItemCount(foodPouchData);
-						if(itemCount > 0 && itemTemp > -IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD && boilerTE.ticksExisted % (4 * itemCount) == 1) {
+						long itemCount = FoodPouchItem.getItemCount(foodPouchData);
+						if(itemCount > 0L && itemTemp < IFrozenRottenFood.FROZEN_ROTTEN_THRESHOLD && boilerTE.ticksExisted % (itemCount << 2L) == 1L) {
 							hasItemStacks = true;
 							itemStack.set(FIAHIAttachmentTypes.FOOD_POUCH_DATA, new FoodPouchData(itemTemp + 0.2D, foodPouchData.items()));
 						}

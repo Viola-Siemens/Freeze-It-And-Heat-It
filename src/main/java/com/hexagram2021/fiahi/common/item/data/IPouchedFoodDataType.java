@@ -8,6 +8,8 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;
@@ -15,10 +17,12 @@ import java.util.Map;
 public interface IPouchedFoodDataType<T> {
 	DataComponentType<T> getDataComponentType();
 	MapCodec<? extends IPouchedFoodData<T>> codec();
+	StreamCodec<RegistryFriendlyByteBuf, ? extends IPouchedFoodData<T>> streamCodec();
 	IPouchedFoodData<T> create(T object);
 
 	Map<ResourceLocation, IPouchedFoodDataType<?>> POUCHED_FOOD_DATA_TYPES = Maps.newHashMap();
 	Map<IPouchedFoodDataType<?>, ResourceLocation> POUCHED_FOOD_DATA_IDS = Maps.newIdentityHashMap();
+
 	static void register(ResourceLocation id, IPouchedFoodDataType<?> pouchedFoodDataType) {
 		if(POUCHED_FOOD_DATA_TYPES.containsKey(id)) {
 			FIAHILogger.warn(new IllegalStateException("Duplicate pouched food data type registered: %s.".formatted(id)));
@@ -49,6 +53,27 @@ public interface IPouchedFoodDataType<T> {
 			}
 			R key = ops.createString(id.toString());
 			return ops.mergeToPrimitive(prefix, key);
+		}
+	};
+
+	StreamCodec<RegistryFriendlyByteBuf, IPouchedFoodDataType<?>> STREAM_CODEC = new StreamCodec<>() {
+		@Override
+		public IPouchedFoodDataType<?> decode(RegistryFriendlyByteBuf buffer) {
+			ResourceLocation id = ResourceLocation.STREAM_CODEC.decode(buffer);
+			IPouchedFoodDataType<?> ret = POUCHED_FOOD_DATA_TYPES.get(id);
+			if(ret == null) {
+				throw new IllegalArgumentException("Unexpected type: " + id);
+			}
+			return ret;
+		}
+
+		@Override
+		public void encode(RegistryFriendlyByteBuf buffer, IPouchedFoodDataType<?> value) {
+			ResourceLocation id = POUCHED_FOOD_DATA_IDS.get(value);
+			if(id == null) {
+				throw new IllegalArgumentException("Unknown pouched food data type: %s" + value);
+			}
+			ResourceLocation.STREAM_CODEC.encode(buffer, id);
 		}
 	};
 }

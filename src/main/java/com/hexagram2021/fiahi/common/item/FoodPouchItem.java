@@ -37,7 +37,7 @@ public class FoodPouchItem extends Item {
 		return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
 	}
 
-	public static int getItemCount(FoodPouchData foodPouchData) {
-		return foodPouchData.items().stream().map(ItemStack::getCount).reduce(0, Integer::sum);
+	public static long getItemCount(FoodPouchData foodPouchData) {
+		return foodPouchData.items().stream().mapToLong(FoodPouchData.ItemWithCount::count).sum();
 	}
 }

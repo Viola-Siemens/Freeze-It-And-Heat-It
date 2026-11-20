@@ -1,6 +1,8 @@
 package com.hexagram2021.fiahi.common.item.data;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -8,10 +10,17 @@ import java.util.Objects;
 
 public interface IPouchedFoodData<T> {
 	Codec<IPouchedFoodData<?>> REGISTRY_CODEC = IPouchedFoodDataType.REGISTRY_CODEC.dispatch(IPouchedFoodData::type, IPouchedFoodDataType::codec);
+	StreamCodec<RegistryFriendlyByteBuf, IPouchedFoodData<?>> STREAM_CODEC = IPouchedFoodDataType.STREAM_CODEC.dispatch(IPouchedFoodData::type, IPouchedFoodDataType::streamCodec);
 
 	IPouchedFoodDataType<T> type();
 	T object();
+	boolean equals(Object obj);
+	int hashCode();
 
+	/**
+	 * 根据当前附加数据修改物品堆叠
+	 * @param itemStack 物品堆叠
+	 */
 	default void modifyStack(ItemStack itemStack) {
 		itemStack.set(this.type().getDataComponentType(), this.object());
 	}
